@@ -11,4 +11,8 @@ import scrapy
 class KeqqItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    course_name = scrapy.Field()
+    sold_count = scrapy.Field()
+    price = scrapy.Field()
+    sold_by = scrapy.Field()
+    link = scrapy.Field()
