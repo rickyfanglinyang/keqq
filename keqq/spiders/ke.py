@@ -101,24 +101,32 @@ class KeSpider(scrapy.Spider):
         logging.log(logging.WARNING, "teach_section: " + str(teach_section))
 
          #Table Content
-        logging.log(logging.WARNING,"############--Sart of Table Content") 
-        for content in response.xpath("//div[@class='task-chapter']/div[@class='task-part-list']/div[@class='task-part-item']"):
+        logging.log(logging.WARNING,"############--Sart of Table Content")
+        for content in response.xpath("//div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/div[@class='task-part-list']/div[@class='task-part-item']"):
             chapter_no = content.xpath("./div[@class='task-part-hd']/span/text()").extract()
             chapter_name = content.xpath("./div[@class='task-part-hd']/h3/text()").extract()
 
-            logging.log(logging.WARNING,"############--Table Content")    
+            # Tecacher Info
+             teachers_info = response.xpath("//main[@class='main']/div[@class='content tabs']/div[@class='tabs-content']/h3/text()").extract()
+             response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_basic_tab']/h3/text()").extract() # for 1st tab
+             response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/text()").extract()
+             response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]/div[contains(@class,'js-chapter-list pt20')]")
+             response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]").extract()  # still doesn't work
+
+
+            logging.log(logging.WARNING,"############--Table Content")
 
             logging.log(logging.WARNING, "chapter_no + chapter_name: " + chapter_no  + chapter_name)
-            
+
             for task in content.xpath("./div[@class='task-task-list']"):
                 task_name = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='task-tt-text']/text()").extract()
                 task_duration = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='tt-suffix']/text()").extract()
                 logging.log(logging.WARNING, "task_name + task_duration: " + task_name  + task_duration)
 
-        logging.log(logging.WARNING,"############--End of Table Content") 
+        logging.log(logging.WARNING,"############--End of Table Content")
 
         #Tecacher List
-        for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"): #no extract() needed 
+        for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"): #no extract() needed
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
             course_url = response.url
@@ -131,7 +139,4 @@ class KeSpider(scrapy.Spider):
             logging.log(logging.WARNING, "teacher_intro: " + teacher_intro)
             logging.log(logging.WARNING, "course_url: " + course_url)
 
-        logging.log(logging.WARNING,"############--End Teacher List")            
-
-       
-            
+        logging.log(logging.WARNING,"############--End Teacher List")
