@@ -7,6 +7,7 @@ from keqq.items import KeqqItem
 
 
 
+
 class KeSpider(scrapy.Spider):
     name = 'ke'
     allowed_domains = ['ke.qq.com']
@@ -16,17 +17,22 @@ class KeSpider(scrapy.Spider):
     def parse(self, response):
         print("This is the start of response --------------------------")
         # result = response.body.decode('utf-8', 'ignore')
-        print(response.xpath("//title/text()").extract())
+        pagetitle = response.xpath("//title/text()").extract()
+        print(pagetitle)
+
+        title = "title: " + str(pagetitle)
+        savefield(title)
         # print('what is the result: ',result)
         # logging.log(logging.WARNING, "----" * 200)
         # logging.log(logging.WARNING, "###: " + result)
         # logging.log(logging.WARNING, "----" * 200)
 
         key = "python"
-        for i in range(1,2):
+        for i in range(1,12):
             url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
-
-        yield Request(url=url, callback=self.page)
+            print("No %d %s" %(i,url))
+            savefield("No %d %s" %(i,url))
+            yield Request(url=url, callback=self.page)
 
 
     def page(self, response):
@@ -52,11 +58,18 @@ class KeSpider(scrapy.Spider):
             print("sold_by ##: ", sold_by)
             print("link ##: ", link)
 
-            logging.log(logging.WARNING, "course_name ##: " + course_name)
-            logging.log(logging.WARNING, "sold_count ##: " + sold_count)
-            logging.log(logging.WARNING, "price ##: " + str(price))
-            logging.log(logging.WARNING, "sold_by ##: " + sold_by)
-            logging.log(logging.WARNING, "link ##: " + link)
+            savefield("course_name ##:  %s" %course_name)
+            savefield("sold_count ##:  %s" %sold_count)
+            savefield("price ##:  %s" %price)
+            savefield("sold_by ##:  %s" %sold_by)
+            savefield("link ##:  %s" %link)
+
+
+            # logging.log(logging.WARNING, "course_name ##: " + str(course_name)
+            # logging.log(logging.WARNING, "sold_count ##: " + sold_count)
+            # logging.log(logging.WARNING, "price ##: " + str(price))
+            # logging.log(logging.WARNING, "sold_by ##: " + sold_by)
+            # logging.log(logging.WARNING, "link ##: " + link)
 
 
             # a_course = []
@@ -95,23 +108,30 @@ class KeSpider(scrapy.Spider):
         print("intro_detail: ", intro_detail)
         print("teach_section: ", teach_section)
 
-        logging.log(logging.WARNING, "Course Detail Title: " + str(title))
-        logging.log(logging.WARNING, "intro_title: " + str(intro_title))
-        logging.log(logging.WARNING, "intro_detail: " + str(intro_detail))
-        logging.log(logging.WARNING, "teach_section: " + str(teach_section))
+        savefield("Course Detail Title:  %s" %title)
+        savefield("intro_title ##:  %s" %intro_title)
+        savefield("intro_detail ##:  %s" %intro_detail)
+        savefield("teach_section ##:  %s" %teach_section)
+        
+
+        # logging.log(logging.WARNING, "Course Detail Title: " + str(title))
+        # logging.log(logging.WARNING, "intro_title: " + str(intro_title))
+        # logging.log(logging.WARNING, "intro_detail: " + str(intro_detail))
+        # logging.log(logging.WARNING, "teach_section: " + str(teach_section))
 
          #Table Content
-        logging.log(logging.WARNING,"############--Sart of Table Content")
+        logging.log(logging.WARNING,"############--Start of Table Content")
+        savefield("############--Start of Table Content")
         for content in response.xpath("//div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/div[@class='task-part-list']/div[@class='task-part-item']"):
             chapter_no = content.xpath("./div[@class='task-part-hd']/span/text()").extract()
             chapter_name = content.xpath("./div[@class='task-part-hd']/h3/text()").extract()
 
             # Tecacher Info
-             teachers_info = response.xpath("//main[@class='main']/div[@class='content tabs']/div[@class='tabs-content']/h3/text()").extract()
-             response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_basic_tab']/h3/text()").extract() # for 1st tab
-             response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/text()").extract()
-             response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]/div[contains(@class,'js-chapter-list pt20')]")
-             response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]").extract()  # still doesn't work
+            teachers_info = response.xpath("//main[@class='main']/div[@class='content tabs']/div[@class='tabs-content']/h3/text()").extract()
+            response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_basic_tab']/h3/text()").extract() # for 1st tab
+            response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/text()").extract()
+            response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]/div[contains(@class,'js-chapter-list pt20')]")
+            response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]").extract()  # still doesn't work
 
 
             logging.log(logging.WARNING,"############--Table Content")
@@ -124,6 +144,7 @@ class KeSpider(scrapy.Spider):
                 logging.log(logging.WARNING, "task_name + task_duration: " + task_name  + task_duration)
 
         logging.log(logging.WARNING,"############--End of Table Content")
+        savefield("############--End of Table Content")
 
         #Tecacher List
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"): #no extract() needed
@@ -135,8 +156,23 @@ class KeSpider(scrapy.Spider):
             print("teacher_intro: ", teacher_intro)
             print("course_url: ", course_url)
 
+            savefield("teacher_name ##:  %s" %teacher_name)
+            savefield("teacher_intro ##:  %s" %teacher_intro)
+            savefield("course_url ##:  %s" %course_url)
+
             logging.log(logging.WARNING, "teacher_name: " + teacher_name)
             logging.log(logging.WARNING, "teacher_intro: " + teacher_intro)
             logging.log(logging.WARNING, "course_url: " + course_url)
 
         logging.log(logging.WARNING,"############--End Teacher List")
+
+
+def savefield(fieldValue, filepath="F:/appDataPractice/scrapy/keqq/ke.txt"):
+    with open(filepath,'a', encoding='gbk', errors='ignore') as f:
+        f.write(fieldValue)
+        f.write("\n")
+       
+
+
+
+
