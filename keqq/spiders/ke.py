@@ -5,9 +5,6 @@ from scrapy.http import Request
 from keqq.items import KeqqItem
 
 
-
-
-
 class KeSpider(scrapy.Spider):
     name = 'ke'
     allowed_domains = ['ke.qq.com']
@@ -167,11 +164,11 @@ class KeSpider(scrapy.Spider):
         logging.log(logging.WARNING,"############--End Teacher List")
 
 
-def savefield(fieldValue, filepath="F:/appDataPractice/scrapy/keqq/ke.txt"):
+def savefield(fieldValue, filepath="F:/appDataPractice/scrapy/ke.txt"):
     with open(filepath,'a', encoding='gbk', errors='ignore') as f:
         f.write(fieldValue)
         f.write("\n")
-       
+        f.write("-" * 100)
 
 
 
