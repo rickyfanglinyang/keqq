@@ -3,6 +3,7 @@ import scrapy
 import logging
 from scrapy.http import Request
 from keqq.items import KeqqItem
+import json
 
 
 class KeSpider(scrapy.Spider):
@@ -116,33 +117,6 @@ class KeSpider(scrapy.Spider):
         # logging.log(logging.WARNING, "intro_detail: " + str(intro_detail))
         # logging.log(logging.WARNING, "teach_section: " + str(teach_section))
 
-         #Table Content
-        logging.log(logging.WARNING,"############--Start of Table Content")
-        savefield("############--Start of Table Content")
-        for content in response.xpath("//div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/div[@class='task-part-list']/div[@class='task-part-item']"):
-            chapter_no = content.xpath("./div[@class='task-part-hd']/span/text()").extract()
-            chapter_name = content.xpath("./div[@class='task-part-hd']/h3/text()").extract()
-
-            # Tecacher Info
-            teachers_info = response.xpath("//main[@class='main']/div[@class='content tabs']/div[@class='tabs-content']/h3/text()").extract()
-            response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_basic_tab']/h3/text()").extract() # for 1st tab
-            response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/text()").extract()
-            response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]/div[contains(@class,'js-chapter-list pt20')]")
-            response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]").extract()  # still doesn't work
-
-
-            logging.log(logging.WARNING,"############--Table Content")
-
-            logging.log(logging.WARNING, "chapter_no + chapter_name: " + chapter_no  + chapter_name)
-
-            for task in content.xpath("./div[@class='task-task-list']"):
-                task_name = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='task-tt-text']/text()").extract()
-                task_duration = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='tt-suffix']/text()").extract()
-                logging.log(logging.WARNING, "task_name + task_duration: " + task_name  + task_duration)
-
-        logging.log(logging.WARNING,"############--End of Table Content")
-        savefield("############--End of Table Content")
-
         #Tecacher List
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"): #no extract() needed
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
@@ -163,13 +137,67 @@ class KeSpider(scrapy.Spider):
 
         logging.log(logging.WARNING,"############--End Teacher List")
 
+          #Table Content
+        logging.log(logging.WARNING,"############--Start of Table Content")
+        savefield("############--Start of Table Content")
+
+        # for content in response.xpath("//div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/div[@class='task-part-list']/div[@class='task-part-item']"):
+        #     chapter_no = content.xpath("./div[@class='task-part-hd']/span/text()").extract()
+        #     chapter_name = content.xpath("./div[@class='task-part-hd']/h3/text()").extract()
+
+        #     # Tecacher Info
+        #     teachers_info = response.xpath("//main[@class='main']/div[@class='content tabs']/div[@class='tabs-content']/h3/text()").extract()
+        #     response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_basic_tab']/h3/text()").extract() # for 1st tab
+        #     response.xpath("//main[@class='main']/div[@class='content tabs']/div[@id='js_dir_tab']/div[@class='js-chapter-list pt20']/div[@class='task-chapter']/text()").extract()
+        #     response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]/div[contains(@class,'js-chapter-list pt20')]")
+        #     response.xpath("//div[contains(@id,'js_dir_tab') and contains(@class,'tabs-content')]").extract()  # still doesn't work
+
+
+        #     logging.log(logging.WARNING,"############--Table Content")
+
+        #     logging.log(logging.WARNING, "chapter_no + chapter_name: " + chapter_no  + chapter_name)
+
+        #     for task in content.xpath("./div[@class='task-task-list']"):
+        #         task_name = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='task-tt-text']/text()").extract()
+        #         task_duration = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='tt-suffix']/text()").extract()
+        #         logging.log(logging.WARNING, "task_name + task_duration: " + task_name  + task_duration)
+
+        courseTableContent = response.xpath("//body").re(r'metaData\s=\s*(.*)};') 
+        # courseTableContent = str(courseTableContent)
+        # jsonResponse = json.loads(courseTableContent)
+        myTableContent = [] 
+        myTableContent.append(courseTableContent)
+
+        for i in courseTableContent:
+            myTableContent.extend(courseTableContent[i])
+            print(courseTableContent[i])
+
+
+
+        # print(myTableContent)
+        # print(len(myTableContent))
+        # savefield(len(myTableContent))
+
+        # print(courseTableContent.terms[0]) # dic, list
+
+        logging.log(logging.WARNING,"############--End of Table Content")
+        savefield("############--End of Table Content")
+
 
 def savefield(fieldValue, filepath="F:/appDataPractice/scrapy/ke.txt"):
     with open(filepath,'a', encoding='gbk', errors='ignore') as f:
         f.write(fieldValue)
         f.write("\n")
-        f.write("-" * 100)
+        f.write("-" * 100 + "\n")
 
 
 
 
+# https://www.zhihu.com/question/28981353
+# https://zhuanlan.zhihu.com/p/20920903?refer=data-factory
+# https://ithelp.ithome.com.tw/articles/10094915 
+# https://doc.phpspider.org/callback.html
+# http://blog.csdn.net/u011781521/article/details/70210364
+# https://www.weibo.com/ttarticle/p/show?id=2309404103266454643821&infeed=1
+# http://www.jianshu.com/p/4fe8bb1ea984 获取并加载数据
+# https://zhidao.baidu.com/question/1499356415053936779.html 如何利用python读取网页中变量的内容
