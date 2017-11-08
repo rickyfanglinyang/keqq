@@ -164,13 +164,20 @@ class KeSpider(scrapy.Spider):
 
         courseTableContent = response.xpath("//body").re(r'metaData\s=\s*(.*)};') 
         # courseTableContent = str(courseTableContent)
+        n = json.dumps(courseTableContent)
+        o = json.loads(n)
+
+        # print(o)
+        print(str(o['terms'][0]))
+
+
         # jsonResponse = json.loads(courseTableContent)
         myTableContent = [] 
         myTableContent.append(courseTableContent)
 
-        for i in courseTableContent:
-            myTableContent.extend(courseTableContent[i])
-            print(courseTableContent[i])
+        # for i in courseTableContent:
+        #     myTableContent.extend(courseTableContent[i])
+        #     print(courseTableContent[i])
 
 
 
