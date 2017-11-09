@@ -4,7 +4,8 @@ import logging
 from scrapy.http import Request
 from keqq.items import KeqqItem
 import json
-
+import os
+import ast # to convert string to dict
 
 class KeSpider(scrapy.Spider):
     name = 'ke'
@@ -19,19 +20,109 @@ class KeSpider(scrapy.Spider):
         print(pagetitle)
 
         title = "title: " + str(pagetitle)
-        savefield(title)
-        # print('what is the result: ',result)
-        # logging.log(logging.WARNING, "----" * 200)
-        # logging.log(logging.WARNING, "###: " + result)
-        # logging.log(logging.WARNING, "----" * 200)
+        savefield(title, "del")
+        url ="https://ke.qq.com/course/206987"
+        print("URL is %s:"%url)
+        yield Request(url=url, callback=self.tempParse)
 
-        key = "python"
-        for i in range(1,12):
-            url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
-            print("No %d %s" %(i,url))
-            savefield("No %d %s" %(i,url))
-            yield Request(url=url, callback=self.page)
+        # key = "python"
+        # for i in range(1,2):
+        #     url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
+        #     print("No %d %s" %(i,url))
+        #     savefield("No %d %s" %(i,url))
+        #     yield Request(url=url, callback=self.page)
 
+
+
+    def tempParse(self, response):
+        courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
+
+         
+
+        # courseList = []
+        # courseList = courseTableContent
+        strCourse = str(courseTableContent[0])
+        strCourse = "{"+strCourse+"}"
+        jdata = json.loads(strCourse)
+
+        name = jdata["name"]
+        print("name: %s"%name)
+ 
+
+        name = jdata.get("name") # https://zhidao.baidu.com/question/429995405467636172.html
+        print("name: %s"%name)
+
+        termName = jdata["terms"][0]["name"] # http://www.jb51.net/article/49119.htm
+        print("termName: %s"%termName) 
+
+        sub_info_name = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["name"]
+        print("sub_info_name: %s"%sub_info_name)
+
+        task_info_name = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["task_info"][0]["name"]
+        print("task_info_name: %s"%task_info_name)
+
+
+
+
+        return
+
+       
+        # print(type(jdata))
+
+       # Get terms
+        terms = []
+        terms.append(jdata["terms"])
+        # print("type: ",type(terms))
+        # print("terms: %d"%len(terms))
+
+        terms_length = len(terms)
+
+        for i in range(terms_length):
+            # print("terms value is : ", str(terms[i]))
+            myterms = str(terms[i])
+            getChapterInfo(myterms)
+            # print("terms[%d]: %s"%(i,str(terms[i])))
+
+        # for term in terms:
+        #     getChapterInfo(term) #getChapterInfo
+        #     print("term: %s"%term)
+
+        return
+
+        # sub_info
+        sub_info = []
+        for chapter in chapter_info:
+            sub_info.append(chapter.get("sub_info"))
+
+        print("sub_info%d"%len(sub_info))
+
+        # task_info
+        task_info = []
+        for sub in sub_info:
+            task_info.append(sub.get("task_info"))
+
+        print("task_info%d"%len(task_info))
+
+        # tasks
+        tasks = []
+        for task in task_info:
+            taskName = task.get("name")
+            term_id = task.get("term_id")
+            csid = task.get("csid")
+
+            print("taskName%s"%taskName)
+
+        print("tasks%d"%len(tasks))
+
+
+        num = len(courseList)
+        print("length %d"%num)
+        # print(courseList)
+        print("#"*100)
+        # print(strCourse)
+        savefield(strCourse)
+
+        return
 
     def page(self, response):
         # response.xpath("//h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract()
@@ -110,7 +201,7 @@ class KeSpider(scrapy.Spider):
         savefield("intro_title ##:  %s" %intro_title)
         savefield("intro_detail ##:  %s" %intro_detail)
         savefield("teach_section ##:  %s" %teach_section)
-        
+
 
         # logging.log(logging.WARNING, "Course Detail Title: " + str(title))
         # logging.log(logging.WARNING, "intro_title: " + str(intro_title))
@@ -162,17 +253,31 @@ class KeSpider(scrapy.Spider):
         #         task_duration = task.xpath("./a[@class='task-task-item task-item-jump js-expr-video-link js-task-without-login js-expr-item']/p[@class='task-tt']/span[@class='tt-suffix']/text()").extract()
         #         logging.log(logging.WARNING, "task_name + task_duration: " + task_name  + task_duration)
 
-        courseTableContent = response.xpath("//body").re(r'metaData\s=\s*(.*)};') 
-        # courseTableContent = str(courseTableContent)
-        n = json.dumps(courseTableContent)
-        o = json.loads(n)
+        courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
+        courseList = []
+        courseList = courseTableContent
+        num = len(courseList)
+        print(courseList[5])
 
-        # print(o)
-        print(str(o['terms'][0]))
+        return
+
+
+        jstring = str(courseTableContent)
+
+
+
+        print("#@@# json: ", courseTableContent)
+
+        # courseTableContent = str(courseTableContent)
+        # n = json.dumps(courseTableContent)
+        # o = json.loads(n)
+        #
+        # # print(o)
+        # print(str(o['terms'][0]))
 
 
         # jsonResponse = json.loads(courseTableContent)
-        myTableContent = [] 
+        myTableContent = []
         myTableContent.append(courseTableContent)
 
         # for i in courseTableContent:
@@ -191,18 +296,41 @@ class KeSpider(scrapy.Spider):
         savefield("############--End of Table Content")
 
 
-def savefield(fieldValue, filepath="F:/appDataPractice/scrapy/ke.txt"):
+def savefield(fieldValue, flag="no", filepath="C:/Users/IBM_ADMIN/crawlers/ke.txt"):
+    if flag =="del":
+        if os.path.exists(filepath):
+            print("Ready to remove file....")
+            os.remove(filepath)
+        else:
+            print("File doesn't exist")
+
     with open(filepath,'a', encoding='gbk', errors='ignore') as f:
         f.write(fieldValue)
         f.write("\n")
         f.write("-" * 100 + "\n")
+        print("Successfully write to disk")
 
+def getChapterInfo(term):
+    # Get chapter_info
+    term = str(term)
+    myterm = json.loads(term)
+    print("term type in getchapterinfo ", type(myterm))
+
+    chapter_info = []
+    termName = myterm["name"]
+    print("termName:", termName)
+    chapter_info.append(myterm["chapter_info"])
+    print("chapter_info is a list ", str(myterm["chapter_info"]))
+
+    print("chapter_info%d"%len(chapter_info))
+
+    return
 
 
 
 # https://www.zhihu.com/question/28981353
 # https://zhuanlan.zhihu.com/p/20920903?refer=data-factory
-# https://ithelp.ithome.com.tw/articles/10094915 
+# https://ithelp.ithome.com.tw/articles/10094915
 # https://doc.phpspider.org/callback.html
 # http://blog.csdn.net/u011781521/article/details/70210364
 # https://www.weibo.com/ttarticle/p/show?id=2309404103266454643821&infeed=1
