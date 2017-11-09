@@ -45,18 +45,38 @@ class KeSpider(scrapy.Spider):
         strCourse = "{"+strCourse+"}"
         jdata = json.loads(strCourse)
 
-        name = jdata["name"]
-        print("name: %s"%name)
- 
+        course_name = jdata["name"]
+        print("course_name: %s"%course_name)
 
-        name = jdata.get("name") # https://zhidao.baidu.com/question/429995405467636172.html
-        print("name: %s"%name)
+        for i in range(len(jdata["terms"])):
+            termName = jdata["terms"][i]["name"]
+            print("termName: %s"%termName) 
+            print("i= %d"%i)
+            for ichapter in range(len(jdata["terms"][i]["chapter_info"])):
+                for isub in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"])):
+                     sub_info_sub_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["sub_id"] + 1
+                     sub_info_sub_id = "%02d" % sub_info_sub_id
+                     print("sub_info_sub_id: %s"%sub_info_sub_id)
+                     sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["name"]
+                     print("sub_info_name: %s"%sub_info_name)
+                     for itask in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"])):
+                        task_info_name = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["name"]
+                        print("task_info_name: %s"%task_info_name)
 
-        termName = jdata["terms"][0]["name"] # http://www.jb51.net/article/49119.htm
-        print("termName: %s"%termName) 
 
-        sub_info_name = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["name"]
+
+
+
+        return
+        
+        
+
+        sub_info_sub_id = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["sub_id"] + 1
+        sub_info_sub_id = "%02d" % sub_info_sub_id
+        print("sub_info_sub_id: %s"%sub_info_sub_id)
+        sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["name"]
         print("sub_info_name: %s"%sub_info_name)
+
 
         task_info_name = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["task_info"][0]["name"]
         print("task_info_name: %s"%task_info_name)
