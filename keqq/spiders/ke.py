@@ -30,17 +30,11 @@ class KeSpider(scrapy.Spider):
         #     url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
         #     print("No %d %s" %(i,url))
         #     savefield("No %d %s" %(i,url))
-        #     yield Request(url=url, callback=self.page)
-
+        #     yield Request(url=url, callback=self.page)  
 
 
     def tempParse(self, response):
         courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
-
-         
-
-        # courseList = []
-        # courseList = courseTableContent
         strCourse = str(courseTableContent[0])
         strCourse = "{"+strCourse+"}"
         jdata = json.loads(strCourse)
@@ -63,86 +57,52 @@ class KeSpider(scrapy.Spider):
                         task_info_name = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["name"]
                         print("task_info_name: %s"%task_info_name)
 
+        #  Get comments 
+        print("Starting to fetch comments ....")
+        course_id = '206987' #course_id
+        url = "https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid="+course_id+"&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375"
+        header = {
+            ':authority':'ke.qq.com',
+            ':method':'GET',
+            'referer':'https://ke.qq.com/course/'+course_id+'',
+            'user-agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36',
+            'x-requested-with':'XMLHttpRequest'
+            }
+        yield Request(url=url, callback=self.getComment, headers=header)
+        # yield Request(url=link, callback=self.detail)
+
+    def getComment(self, response):
+         print("Inside getComment ....")
+         result = response.body.decode('utf-8','ignore')
+         comment = json.loads(result)
+
+         for i in range(len(comment["result"]["items"])):
+            nick_name  =  comment["result"]["items"][i]["nick_name"]
+            userid = comment["result"]["items"][i]["id"] 
+            first_comment_score = comment["result"]["items"][i]["first_comment_score"] # 评论星数
+            first_comment_time = comment["result"]["items"][i]["first_comment_time"] # 评论时间
+            first_comment_progress = comment["result"]["items"][i]["first_comment_progress"] # 评论时间
+            rating = comment["result"]["items"][i]["rating"] # 评分
+            cid = comment["result"]["items"][i]["cid"] # 课程id
+            first_comment =  comment["result"]["items"][i]["first_comment"] # 评论内容
+
+            try:
+                if len(comment["result"]["items"][i]) < 10 :
+                    first_reply ="No comment"
+                else:
+                    print("I am in else ")
+                    first_reply = comment["result"]["items"][i]["first_reply"] # 评论回复
+            except Exception as ex:
+                print("Errors #### @:",str(ex))
 
 
+            print("nick_name @ ： %s his comment is ##： %s  and vendor reply @@: %s"%(nick_name,first_comment,first_reply))
+            
 
+         
 
-        return
-        
-        
+         # print("response %s"%result)
 
-        sub_info_sub_id = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["sub_id"] + 1
-        sub_info_sub_id = "%02d" % sub_info_sub_id
-        print("sub_info_sub_id: %s"%sub_info_sub_id)
-        sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["name"]
-        print("sub_info_name: %s"%sub_info_name)
-
-
-        task_info_name = jdata["terms"][0]["chapter_info"][0]["sub_info"][0]["task_info"][0]["name"]
-        print("task_info_name: %s"%task_info_name)
-
-
-
-
-        return
-
-       
-        # print(type(jdata))
-
-       # Get terms
-        terms = []
-        terms.append(jdata["terms"])
-        # print("type: ",type(terms))
-        # print("terms: %d"%len(terms))
-
-        terms_length = len(terms)
-
-        for i in range(terms_length):
-            # print("terms value is : ", str(terms[i]))
-            myterms = str(terms[i])
-            getChapterInfo(myterms)
-            # print("terms[%d]: %s"%(i,str(terms[i])))
-
-        # for term in terms:
-        #     getChapterInfo(term) #getChapterInfo
-        #     print("term: %s"%term)
-
-        return
-
-        # sub_info
-        sub_info = []
-        for chapter in chapter_info:
-            sub_info.append(chapter.get("sub_info"))
-
-        print("sub_info%d"%len(sub_info))
-
-        # task_info
-        task_info = []
-        for sub in sub_info:
-            task_info.append(sub.get("task_info"))
-
-        print("task_info%d"%len(task_info))
-
-        # tasks
-        tasks = []
-        for task in task_info:
-            taskName = task.get("name")
-            term_id = task.get("term_id")
-            csid = task.get("csid")
-
-            print("taskName%s"%taskName)
-
-        print("tasks%d"%len(tasks))
-
-
-        num = len(courseList)
-        print("length %d"%num)
-        # print(courseList)
-        print("#"*100)
-        # print(strCourse)
-        savefield(strCourse)
-
-        return
 
     def page(self, response):
         # response.xpath("//h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract()
@@ -173,26 +133,6 @@ class KeSpider(scrapy.Spider):
             savefield("sold_by ##:  %s" %sold_by)
             savefield("link ##:  %s" %link)
 
-
-            # logging.log(logging.WARNING, "course_name ##: " + str(course_name)
-            # logging.log(logging.WARNING, "sold_count ##: " + sold_count)
-            # logging.log(logging.WARNING, "price ##: " + str(price))
-            # logging.log(logging.WARNING, "sold_by ##: " + sold_by)
-            # logging.log(logging.WARNING, "link ##: " + link)
-
-
-            # a_course = []
-            # a_course.append(course_name)
-            # a_course.append(sold_count)
-            # a_course.append(price)
-            # a_course.append(sold_by)
-            # a_course.append(link)
-
-            # logging.log(logging.WARNING, "####" * 100)
-            # logging.log(logging.WARNING, a_course)
-            # logging.log(logging.WARNING, "----" * 100)
-
-            # list_courses.append(a_course)
             #For Debug purpose #
             item = KeqqItem()
             item["course_name"] = course_name
