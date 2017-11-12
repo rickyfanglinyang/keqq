@@ -30,12 +30,8 @@ class KeSpider(scrapy.Spider):
         yield Request(url=url, callback=self.page)
 
     def page(self, response):
-        # response.xpath("//h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract()
-        # course_name  = response.xpath("//ul[@class='course-card-list']/li[@class='course-card-item']/h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract()
-        # sold_count  = response.xpath("//ul[@class='course-card-list']/li[@class='course-card-item']/div[@class='item-line item-line--middle']/span[@class='line-cell item-user']/text()").extract()
-        # price  = response.xpath("//ul[@class='course-card-list']/li[@class='course-card-item']/div[@class='item-line item-line--bottom']/span[@class='line-cell item-price']/text()").extract()
-        # sold_by  = response.xpath("//ul[@class='course-card-list']/li[@class='course-card-item']/div[@class='item-line item-line--middle']/span[@class='item-source']/a[@class='item-source-link']/text()").extract()
-
+        global item  # define global variable 
+ 
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
             course_name = course.xpath("./h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract_first()
             sold_count  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='line-cell item-user']/text()").extract_first()
@@ -49,14 +45,8 @@ class KeSpider(scrapy.Spider):
             print("price ##: ", price)
             print("sold_by ##: ", sold_by)
             print("link ##: ", link)
-
-            savefield("course_name ##:  %s" %course_name)
-            savefield("sold_count ##:  %s" %sold_count)
-            savefield("price ##:  %s" %price)
-            savefield("sold_by ##:  %s" %sold_by)
-            savefield("link ##:  %s" %link)
-
             #For Debug purpose #
+            
             item = KeqqItem()
             item["course_name"] = course_name
             item["sold_count"] = sold_count
@@ -68,34 +58,40 @@ class KeSpider(scrapy.Spider):
 
 
     def detail(self, response):
-        title = response.xpath("//title/text()").extract()
+        course_detail_title = response.xpath("//title/text()").extract()
         intro_title =  response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/th/text()").extract()
         intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract()
         teach_section = response.xpath("//div[@class='tabs-content']/h3/text()").extract()
 
-        print("Course Detail Title: ", title)
+        print("Course Detail Title: ", course_detail_title)
         print("intro_title: ", intro_title)
         print("intro_detail: ", intro_detail)
         print("teach_section: ", teach_section)
 
-        savefield("Course Detail Title:  %s" %title)
-        savefield("intro_title ##:  %s" %intro_title)
-        savefield("intro_detail ##:  %s" %intro_detail)
-        savefield("teach_section ##:  %s" %teach_section)
+        item["course_detail_title"] = course_detail_title
+        item["intro_title"] = intro_title
+        item["intro_detail"] = intro_detail
+        item["teach_section"] = teach_section
+       
 
+        itemTeacher = KeqqItemTeacher()
+        
         #Tecacher List
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"):
+            teacher_id = teach.xpath("./div[@class='text-right']/h4/a/@href").extract_first()
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
             course_url = response.url
 
+            print("teacher_id: ", teacher_id)
             print("teacher_name: ", teacher_name)
             print("teacher_intro: ", teacher_intro)
             print("course_url: ", course_url)
 
-            savefield("teacher_name ##:  %s" %teacher_name)
-            savefield("teacher_intro ##:  %s" %teacher_intro)
-            savefield("course_url ##:  %s" %course_url)
+            itemTeacher["teacher_id"] = teacher_id
+            itemTeacher["teacher_name"] = teacher_name
+            itemTeacher["teacher_intro"] = teacher_intro
+            itemTeacher["course_url"] = course_url
 
         # Get class table contents
         courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
@@ -107,19 +103,69 @@ class KeSpider(scrapy.Spider):
         print("course_name: %s"%course_name)
 
         for i in range(len(jdata["terms"])):
-            termName = jdata["terms"][i]["name"]
-            print("termName: %s"%termName) 
+            term_Name = jdata["terms"][i]["name"]
+            term_id = jdata["terms"][i]["term_id"]
+            term_cid = jdata["terms"][i]["cid"]
+            term_aid = jdata["terms"][i]["aid"]
+
+            print("termName: %s"%term_Name) 
             print("i= %d"%i)
+            print("term_Name: %s term_id : %s term_cid: %s term_aid %s "%(term_Name, term_id, term_cid, term_aid))
+
+            item["term_Name"] = term_Name
+            item["term_id"] = term_id
+            item["term_cid"] = term_cid
+            item["term_aid"] = term_aid
+
+
             for ichapter in range(len(jdata["terms"][i]["chapter_info"])):
+                chapter_term_id = jdata["terms"][i]["chapter_info"][ichapter]["term_id"]
+                chapter_aid = jdata["terms"][i]["chapter_info"][ichapter]["aid"]
+                chapter_ch_id = jdata["terms"][i]["chapter_info"][ichapter]["ch_id"]
+                chapter_cid = jdata["terms"][i]["chapter_info"][ichapter]["cid"]
+                print("chapter_term_id: %s chapter_aid : %s chapter_ch_id: %s chapter_cid %s "%(chapter_term_id, chapter_aid, chapter_ch_id, chapter_cid))
+
+                item["chapter_term_id"] = chapter_term_id
+                item["chapter_aid"] = chapter_aid
+                item["chapter_ch_id"] = chapter_ch_id
+                item["chapter_cid"] = chapter_cid
+
                 for isub in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"])):
+                     sub_info_term_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["term_id"]
+                     sub_info_csid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["csid"]
+                     sub_info_cid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["cid"]
                      sub_info_sub_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["sub_id"] + 1
                      sub_info_sub_id = "%02d" % sub_info_sub_id
                      print("sub_info_sub_id: %s"%sub_info_sub_id)
                      sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["name"]
                      print("sub_info_name: %s"%sub_info_name)
+                     print("sub_info_term_id: %s sub_info_csid : %s sub_info_cid: %s"%(sub_info_term_id, sub_info_csid, sub_info_cid))
+
+                     item["sub_info_term_id"] = sub_info_term_id
+                     item["sub_info_csid"] = sub_info_csid
+                     item["sub_info_cid"] = sub_info_cid
+                     item["sub_info_sub_id"] = sub_info_sub_id
+                     item["sub_info_name"] = sub_info_name
+
+
                      for itask in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"])):
+
                         task_info_name = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["name"]
+                        task_info_term_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["term_id"]
+                        task_info_csid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["csid"]
+                        task_info_aid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["aid"]
+                        task_info_cid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["cid"]
+                        task_info_taid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["taid"]
+
                         print("task_info_name: %s"%task_info_name)
+                        print("task_info_term_id: %s task_info_csid : %s task_info_aid: %s task_info_cid %s task_info_taid: %s"%(task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid))
+                        item["task_info_name"] = task_info_name
+                        item["task_info_term_id"] = task_info_term_id
+                        item["task_info_csid"] = task_info_csid
+                        item["task_info_aid"] = task_info_aid
+                        item["task_info_cid"] = task_info_cid
+                        item["task_info_taid"] = task_info_taid
+
 
         #  Get comments 
         print("Starting to fetch comments ....")
@@ -142,11 +188,13 @@ class KeSpider(scrapy.Spider):
 
        
     def getComment(self, response):
-         print("Inside getComment ....")
-         result = response.body.decode('utf-8','ignore')
-         comment = json.loads(result)
+        # global item # reassure global variable 
 
-         for i in range(len(comment["result"]["items"])):
+        print("Inside getComment ....")
+        result = response.body.decode('utf-8','ignore')
+        comment = json.loads(result)
+
+        for i in range(len(comment["result"]["items"])):
             nick_name  =  comment["result"]["items"][i]["nick_name"]
             userid = comment["result"]["items"][i]["id"] 
             first_comment_score = comment["result"]["items"][i]["first_comment_score"] # 评论星数
@@ -165,26 +213,21 @@ class KeSpider(scrapy.Spider):
             except Exception as ex:
                 print("Errors #### @:",str(ex))
             
-            # 定义dict用户存储字段值
-            print(dict(nick_name=nick_name, userid=userid, first_comment_score=first_comment_score, first_comment_time=first_comment_time,
-                first_comment_progress=first_comment_progress, rating=rating, cid=cid, first_comment=first_comment
-            ))
+            item["nick_name"] = nick_name
+            item["userid"] = userid
+            item["first_comment_score"] = first_comment_score
+            item["first_comment_time"] = first_comment_time
+            item["first_comment_progress"] = first_comment_progress
+            item["rating"] = rating  
+            item["cid"] = cid
+            item["first_comment"] = first_comment              
 
 
-            # print("nick_name @ ： %s his comment is ##： %s  and vendor reply @@: %s"%(nick_name,first_comment,first_reply))
-            yield {
-                'nick_name':nick_name,
-                'userid':userid,
-                'first_comment_score':first_comment_score,
-                'first_comment_time':first_comment_time,
-                'first_comment_progress':first_comment_progress,
-                'rating':rating,
-                'cid':cid,
-                'first_comment':first_comment,
-                'first_reply':first_reply
+        # 返回所有的数据        
+        yield item
 
-            }
-
+            
+           
 def savefield(fieldValue): 
     # 普通方法不需要空格后再写，否则在调用的地方会找不到方法
     filepath = "C:/Users/IBM_ADMIN/crawlers/ke.txt"
@@ -212,3 +255,4 @@ def savefield(fieldValue):
 # https://www.weibo.com/ttarticle/p/show?id=2309404103266454643821&infeed=1
 # http://www.jianshu.com/p/4fe8bb1ea984 获取并加载数据
 # https://zhidao.baidu.com/question/1499356415053936779.html 如何利用python读取网页中变量的内容
+# http://blog.chinaunix.net/uid-23500957-id-3788157.html

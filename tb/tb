@@ -4,25 +4,25 @@ jdata['terms']['chapter_info']['sub_info'][task_info]
 
 
 [course]
-id, name, sales, originprice, currentprice, vendor
+id (make it auto primary key), name, sales, originprice, currentprice, vendor
 
-coursedetail
+----coursedetail
 [coureintro] 
-id, description, termid, chapter_info_id, sub_info_id, task_info_id
+id (make it auto primary key), description,cid(the whole course id same value as in the url), cid, iad, termid, csid, taid
 
-tablecontent
+----tablecontent
 [term]
-termid, term_name
+id (make it auto primary key), termid, term_name
 [chapter]
-chapter_info_id, chapter_info_name
+id, chapter_info_id, chapter_info_name
 [sub]
-sub_info_id,sub_info_name
+id (make it auto primary key),sub_info_id (for video class prefix only),sub_info_name, csid (class sub info id)
 [task]
-task_info_id, task_info_name
-comment
+task_info_id, task_info_name,cid (the whole course id same value as in the url), term_id, csid (class sub info id), taid(class task id)
+----comment
 [summary]
-course_id, rating, total, good, bad, medium
+id (make it auto primary key), course_id, rating, total, good, bad, medium
 
 [teacher]
-teacher_id, name, description
+id (make it auto primary key), teacher_id, name, description
 
