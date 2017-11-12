@@ -32,7 +32,7 @@ class KeSpider(scrapy.Spider):
 
         title = "title: " + str(pagetitle)
         # savefield(title, "del")
-        savefield(title)
+        # savefield(title)
 
         key = "顾忠的贝斯世界俱乐部"
         for i in range(1,2):
@@ -73,22 +73,27 @@ class KeSpider(scrapy.Spider):
 
 
     def detail(self, response):
-        course_detail_title = response.xpath("//title/text()").extract()
+        # Course Intro
+        intro_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_basic_tab']/text()").extract()
+        content_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_dir_tab']/text()").extract()
+        comment_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_comment_tab']/text()").extract()
         intro_title =  response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/th/text()").extract()
         intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract()
-        teach_section = response.xpath("//div[@class='tabs-content']/h3/text()").extract()
+        teacher_intro_title = response.xpath("//div[@class='tabs-content']/h3/text()").extract()
 
-        print("Course Detail Title: ", course_detail_title)
+        print("intro_tab: ", intro_tab)
         print("intro_title: ", intro_title)
         print("intro_detail: ", intro_detail)
-        print("teach_section: ", teach_section)
+        print("teacher_intro_title: ", teacher_intro_title)
 
         itemIntro = KeqqItemIntro()
 
-        itemIntro["course_detail_title"] = course_detail_title
+        itemIntro["intro_tab"] = intro_tab
+        itemIntro["content_tab"] = content_tab
+        itemIntro["comment_tab"] = comment_tab
         itemIntro["intro_title"] = intro_title
         itemIntro["intro_detail"] = intro_detail
-        itemIntro["teach_section"] = teach_section
+        itemIntro["teacher_intro_title"] = teacher_intro_title
 
         itemList["KeqqItemIntro"] = itemIntro        
         
@@ -98,19 +103,19 @@ class KeSpider(scrapy.Spider):
             teacher_id = teach.xpath("./div[@class='text-right']/h4/a/@href").extract_first()
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
-            course_url = response.url
+            # course_url = response.url
 
             print("teacher_id: ", teacher_id)
             print("teacher_name: ", teacher_name)
             print("teacher_intro: ", teacher_intro)
-            print("course_url: ", course_url)
+            # print("course_url: ", course_url)
 
             itemTeacher = KeqqItemTeacher()
 
             itemTeacher["teacher_id"] = teacher_id
             itemTeacher["teacher_name"] = teacher_name
             itemTeacher["teacher_intro"] = teacher_intro
-            itemTeacher["course_url"] = course_url
+            # itemTeacher["course_url"] = course_url
 
             itemTeachers.append(itemTeacher)
         

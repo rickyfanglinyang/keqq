@@ -26,3 +26,25 @@ id (make it auto primary key), course_id, rating, total, good, bad, medium
 [teacher]
 id (make it auto primary key), teacher_id, name, description
 
+
+======================================sql
+ create database keqq;
+
+ create table course (
+	id int not null auto_increment primary key,
+	course_name varchar(50),
+	sold_count varchar(50),
+	price varchar(20),
+	sold_by varchar(50),
+	link varchar(100)
+);
+
+create table courseIntro (
+	id int not null auto_increment primary key,
+	intro_tab varchar(50),
+	content_tab varchar(50),
+	comment_tab varchar(50),
+	intro_title varchar(50),
+	intro_detail varchar(20),
+	teacher_intro_title varchar(50)
+);

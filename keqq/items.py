@@ -19,10 +19,12 @@ class KeqqItem(scrapy.Item):
 class KeqqItemIntro(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    course_detail_title = scrapy.Field()
-    intro_title = scrapy.Field()
-    intro_detail = scrapy.Field()
-    teach_section = scrapy.Field()    
+    intro_tab = scrapy.Field() # 值：课程概述 
+    content_tab = scrapy.Field() # 值：课程目录
+    comment_tab = scrapy.Field() # 值：学员评论
+    intro_title = scrapy.Field() # 值：简　　介
+    intro_detail = scrapy.Field() # 值：简介详情
+    teacher_intro_title = scrapy.Field()    
 
 class KeqqItemTeacher(scrapy.Item):
     # define the fields for your item here like:
@@ -30,7 +32,7 @@ class KeqqItemTeacher(scrapy.Item):
     teacher_id = scrapy.Field()
     teacher_name = scrapy.Field()
     teacher_intro = scrapy.Field()
-    course_url = scrapy.Field()
+    # course_url = scrapy.Field()
     
 
 class KeqqItemTerm(scrapy.Item):

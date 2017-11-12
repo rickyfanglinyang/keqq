@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-impport mysql.connector
+import mysql.connector
 
 # Define your item pipelines here
 #
@@ -11,23 +11,23 @@ impport mysql.connector
 class KeqqPipeline(object):
 
     def process_item(self, item, spider):
-    	try:
-    		conn = mysql.connector.connect(host="127.0.0.1", user="root", password="mysql123", db="tb")
-    		cursor = conn.cursor()
+        try:
+             conn = mysql.connector.connect(host="127.0.0.1", user="root", password="mysql123", db="tb")
+             cursor = conn.cursor()
 
-    		sql =""
+             # sql =""
 
-    		cursor.execute(sql)
-    		cursor.rowcount
+             # cursor.execute(sql)
+             # cursor.rowcount
 
-    		conn.commit()
-    		cursor.close()
-    		conn.close()
+             # conn.commit()
+             
+             cursor.close()
+             conn.close()
 
 
-
-        	return item
+             return item
 
         except Exception as e:
-        	print("You are receiving an error @ # : ", e)
+            print("You are receiving an error @ # : ", e)
 
