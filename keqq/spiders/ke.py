@@ -3,6 +3,15 @@ import scrapy
 import logging
 from scrapy.http import Request
 from keqq.items import KeqqItem
+from keqq.items import KeqqItemIntro
+from keqq.items import KeqqItemTeacher
+from keqq.items import KeqqItemTerm 
+from keqq.items import KeqqItemChapter
+from keqq.items import KeqqItemSubInfo 
+from keqq.items import KeqqItemTaskInfo 
+from keqq.items import KeqqItemComment
+from keqq.items import KeqqItemList
+# import keqq.items # doesn't work
 import json
 import os
 
@@ -30,8 +39,10 @@ class KeSpider(scrapy.Spider):
         yield Request(url=url, callback=self.page)
 
     def page(self, response):
-        global item  # define global variable 
- 
+        global itemList # define global variable 
+        
+        itemList = KeqqItemList()
+
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
             course_name = course.xpath("./h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract_first()
             sold_count  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='line-cell item-user']/text()").extract_first()
@@ -54,6 +65,8 @@ class KeSpider(scrapy.Spider):
             item["sold_by"] = sold_by
             item["link"] = link
 
+            itemList["KeqqItem"] = item 
+
             yield Request(url=link, callback=self.detail)
 
 
@@ -68,15 +81,17 @@ class KeSpider(scrapy.Spider):
         print("intro_detail: ", intro_detail)
         print("teach_section: ", teach_section)
 
-        item["course_detail_title"] = course_detail_title
-        item["intro_title"] = intro_title
-        item["intro_detail"] = intro_detail
-        item["teach_section"] = teach_section
-       
+        itemIntro = KeqqItemIntro()
 
-        itemTeacher = KeqqItemTeacher()
+        itemIntro["course_detail_title"] = course_detail_title
+        itemIntro["intro_title"] = intro_title
+        itemIntro["intro_detail"] = intro_detail
+        itemIntro["teach_section"] = teach_section
+
+        itemList["KeqqItemIntro"] = itemIntro        
         
         #Tecacher List
+        itemTeachers = []
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"):
             teacher_id = teach.xpath("./div[@class='text-right']/h4/a/@href").extract_first()
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
@@ -88,10 +103,16 @@ class KeSpider(scrapy.Spider):
             print("teacher_intro: ", teacher_intro)
             print("course_url: ", course_url)
 
+            itemTeacher = KeqqItemTeacher()
+
             itemTeacher["teacher_id"] = teacher_id
             itemTeacher["teacher_name"] = teacher_name
             itemTeacher["teacher_intro"] = teacher_intro
             itemTeacher["course_url"] = course_url
+
+            itemTeachers.append(itemTeacher)
+        
+        itemList["KeqqItemTeacher"] = itemTeachers
 
         # Get class table contents
         courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
@@ -101,6 +122,11 @@ class KeSpider(scrapy.Spider):
 
         course_name = jdata["name"]
         print("course_name: %s"%course_name)
+
+        itemTerms = []
+        itemChapters = []
+        itemSubInfos = []
+        itemTaskInfos = []
 
         for i in range(len(jdata["terms"])):
             term_Name = jdata["terms"][i]["name"]
@@ -112,11 +138,14 @@ class KeSpider(scrapy.Spider):
             print("i= %d"%i)
             print("term_Name: %s term_id : %s term_cid: %s term_aid %s "%(term_Name, term_id, term_cid, term_aid))
 
-            item["term_Name"] = term_Name
-            item["term_id"] = term_id
-            item["term_cid"] = term_cid
-            item["term_aid"] = term_aid
+            itemTerm = KeqqItemTerm()
 
+            itemTerm["term_Name"] = term_Name
+            itemTerm["term_id"] = term_id
+            itemTerm["term_cid"] = term_cid
+            itemTerm["term_aid"] = term_aid
+
+            itemTerms.append(itemTerm)
 
             for ichapter in range(len(jdata["terms"][i]["chapter_info"])):
                 chapter_term_id = jdata["terms"][i]["chapter_info"][ichapter]["term_id"]
@@ -125,10 +154,14 @@ class KeSpider(scrapy.Spider):
                 chapter_cid = jdata["terms"][i]["chapter_info"][ichapter]["cid"]
                 print("chapter_term_id: %s chapter_aid : %s chapter_ch_id: %s chapter_cid %s "%(chapter_term_id, chapter_aid, chapter_ch_id, chapter_cid))
 
-                item["chapter_term_id"] = chapter_term_id
-                item["chapter_aid"] = chapter_aid
-                item["chapter_ch_id"] = chapter_ch_id
-                item["chapter_cid"] = chapter_cid
+                itemChapter = KeqqItemChapter()
+
+                itemChapter["chapter_term_id"] = chapter_term_id
+                itemChapter["chapter_aid"] = chapter_aid
+                itemChapter["chapter_ch_id"] = chapter_ch_id
+                itemChapter["chapter_cid"] = chapter_cid
+
+                itemChapters.append(itemChapter)
 
                 for isub in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"])):
                      sub_info_term_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["term_id"]
@@ -140,13 +173,16 @@ class KeSpider(scrapy.Spider):
                      sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["name"]
                      print("sub_info_name: %s"%sub_info_name)
                      print("sub_info_term_id: %s sub_info_csid : %s sub_info_cid: %s"%(sub_info_term_id, sub_info_csid, sub_info_cid))
+                    
+                     itemSubInfo = KeqqItemSubInfo()
 
-                     item["sub_info_term_id"] = sub_info_term_id
-                     item["sub_info_csid"] = sub_info_csid
-                     item["sub_info_cid"] = sub_info_cid
-                     item["sub_info_sub_id"] = sub_info_sub_id
-                     item["sub_info_name"] = sub_info_name
+                     itemSubInfo["sub_info_term_id"] = sub_info_term_id
+                     itemSubInfo["sub_info_csid"] = sub_info_csid
+                     itemSubInfo["sub_info_cid"] = sub_info_cid
+                     itemSubInfo["sub_info_sub_id"] = sub_info_sub_id
+                     itemSubInfo["sub_info_name"] = sub_info_name
 
+                     itemSubInfos.append(itemSubInfo)
 
                      for itask in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"])):
 
@@ -159,13 +195,22 @@ class KeSpider(scrapy.Spider):
 
                         print("task_info_name: %s"%task_info_name)
                         print("task_info_term_id: %s task_info_csid : %s task_info_aid: %s task_info_cid %s task_info_taid: %s"%(task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid))
-                        item["task_info_name"] = task_info_name
-                        item["task_info_term_id"] = task_info_term_id
-                        item["task_info_csid"] = task_info_csid
-                        item["task_info_aid"] = task_info_aid
-                        item["task_info_cid"] = task_info_cid
-                        item["task_info_taid"] = task_info_taid
+    
+                        itemTaskInfo = KeqqItemTaskInfo()                        
+                        itemTaskInfo["task_info_name"] = task_info_name
+                        itemTaskInfo["task_info_term_id"] = task_info_term_id
+                        itemTaskInfo["task_info_csid"] = task_info_csid
+                        itemTaskInfo["task_info_aid"] = task_info_aid
+                        itemTaskInfo["task_info_cid"] = task_info_cid
+                        itemTaskInfo["task_info_taid"] = task_info_taid
 
+                        itemTaskInfos.append(itemTaskInfo)
+
+        # Add table contents 
+        itemList["KeqqItemTerm"] = itemTerms
+        itemList["KeqqItemChapter"] = itemChapters
+        itemList["KeqqItemSubInfo"] = itemSubInfos
+        itemList["KeqqItemTaskInfo"] = itemTaskInfos
 
         #  Get comments 
         print("Starting to fetch comments ....")
@@ -185,7 +230,6 @@ class KeSpider(scrapy.Spider):
             }
 
         yield Request(url=url, callback=self.getComment, headers=header)
-
        
     def getComment(self, response):
         # global item # reassure global variable 
@@ -193,7 +237,8 @@ class KeSpider(scrapy.Spider):
         print("Inside getComment ....")
         result = response.body.decode('utf-8','ignore')
         comment = json.loads(result)
-
+       
+        itemComments = []
         for i in range(len(comment["result"]["items"])):
             nick_name  =  comment["result"]["items"][i]["nick_name"]
             userid = comment["result"]["items"][i]["id"] 
@@ -212,21 +257,23 @@ class KeSpider(scrapy.Spider):
                     first_reply = comment["result"]["items"][i]["first_reply"] # 评论回复
             except Exception as ex:
                 print("Errors #### @:",str(ex))
-            
-            item["nick_name"] = nick_name
-            item["userid"] = userid
-            item["first_comment_score"] = first_comment_score
-            item["first_comment_time"] = first_comment_time
-            item["first_comment_progress"] = first_comment_progress
-            item["rating"] = rating  
-            item["cid"] = cid
-            item["first_comment"] = first_comment              
 
+            itemComment = KeqqItemComment()
 
+            itemComment["nick_name"] = nick_name
+            itemComment["userid"] = userid
+            itemComment["first_comment_score"] = first_comment_score
+            itemComment["first_comment_time"] = first_comment_time
+            itemComment["first_comment_progress"] = first_comment_progress
+            itemComment["rating"] = rating  
+            itemComment["cid"] = cid
+            itemComment["first_comment"] = first_comment   
+
+            itemComments.append(itemComment)           
+
+        itemList["KeqqItemComment"] = itemComments
         # 返回所有的数据        
-        yield item
-
-            
+        yield itemList
            
 def savefield(fieldValue): 
     # 普通方法不需要空格后再写，否则在调用的地方会找不到方法
