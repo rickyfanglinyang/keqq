@@ -20,6 +20,8 @@ class KeSpider(scrapy.Spider):
     name = 'ke'
     allowed_domains = ['ke.qq.com']
     start_urls = ['http://ke.qq.com/']
+    downlaod_deplay = 10
+
     print("starting to launch request..... in %s"%start_urls)
 
     def parse(self, response):
@@ -303,3 +305,4 @@ def savefield(fieldValue):
 # http://www.jianshu.com/p/4fe8bb1ea984 获取并加载数据
 # https://zhidao.baidu.com/question/1499356415053936779.html 如何利用python读取网页中变量的内容
 # http://blog.chinaunix.net/uid-23500957-id-3788157.html
+# http://m.blog.csdn.net/sqc157400661
