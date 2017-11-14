@@ -16,6 +16,8 @@ class KeqqItem(scrapy.Item):
     price = scrapy.Field()
     sold_by = scrapy.Field()
     link = scrapy.Field()
+    cid = scrapy.Field() #course id
+
 class KeqqItemIntro(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -24,7 +26,8 @@ class KeqqItemIntro(scrapy.Item):
     comment_tab = scrapy.Field() # 值：学员评论
     intro_title = scrapy.Field() # 值：简　　介
     intro_detail = scrapy.Field() # 值：简介详情
-    teacher_intro_title = scrapy.Field()    
+    teacher_intro_title = scrapy.Field() 
+    cid = scrapy.Field() #course id   
 
 class KeqqItemTeacher(scrapy.Item):
     # define the fields for your item here like:
@@ -32,6 +35,7 @@ class KeqqItemTeacher(scrapy.Item):
     teacher_id = scrapy.Field()
     teacher_name = scrapy.Field()
     teacher_intro = scrapy.Field()
+    cid = scrapy.Field() #course id
     # course_url = scrapy.Field()
     
 

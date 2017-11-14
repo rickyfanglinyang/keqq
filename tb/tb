@@ -8,7 +8,7 @@ id (make it auto primary key), name, sales, originprice, currentprice, vendor
 
 ----coursedetail
 [coureintro] 
-id (make it auto primary key), description,cid(the whole course id same value as in the url), cid, iad, termid, csid, taid
+id (make it auto primary key), description,cid(the whole course id same value as in the url), termid, csid, taid
 
 ----tablecontent
 [term]
@@ -36,7 +36,8 @@ id (make it auto primary key), teacher_id, name, description
 	sold_count varchar(50),
 	price varchar(20),
 	sold_by varchar(50),
-	link varchar(100)
+	link varchar(100),
+	cid varchar(50)
 );
 
 create table courseIntro (
@@ -46,5 +47,55 @@ create table courseIntro (
 	comment_tab varchar(50),
 	intro_title varchar(50),
 	intro_detail varchar(20),
-	teacher_intro_title varchar(50)
+	teacher_intro_title varchar(50),
+	cid varchar(50)
 );
+
+create table teacher (
+	id int not null auto_increment primary key,
+	teacher_id varchar(50),
+	teacher_name varchar(50),
+	teacher_intro varchar(500),
+	cid varchar(50)
+);
+
+create table term (
+	id int not null auto_increment primary key,
+	term_Name varchar(50),
+	term_id varchar(50),
+	term_cid varchar(50),
+	term_aid varchar(50)
+);
+
+create table Chapter (
+	id int not null auto_increment primary key,
+	chapter_term_id varchar(50),
+	chapter_aid varchar(50),
+	chapter_ch_id varchar(50),
+	chapter_cid varchar(50)
+);
+
+create table SubInfo (
+	id int not null auto_increment primary key,
+	sub_info_term_id varchar(50),
+	sub_info_csid varchar(50),
+	sub_info_cid varchar(50),
+	sub_info_sub_id varchar(50),
+	sub_info_name varchar(50)
+);
+
+create table TaskInfo (
+	id int not null auto_increment primary key,
+	task_info_name varchar(50),
+	task_info_term_id varchar(50),
+	task_info_csid varchar(50),
+	task_info_aid varchar(50),
+	task_info_cid varchar(50),
+	task_info_taid varchar(50)
+);
+
+
+cid varchar(50),
+termid varchar(50),
+csid varchar(50),
+taid varchar(50)

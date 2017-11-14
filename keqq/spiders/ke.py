@@ -52,6 +52,12 @@ class KeSpider(scrapy.Spider):
             sold_by  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='item-source']/a[@class='item-source-link']/text()").extract_first()
             link = "https:" + str(course.xpath("./a/@href").extract_first()).strip() # Remove space in front and end of the link
 
+            # Get course id
+            req_url = link # "https://ke.qq.com/course/206987"
+            split_str = req_url.split("/")
+            course_id = split_str[-1] #取得url中的课程id
+            print("course id in page %s" %course_id)
+
             #For Debug purpose #
             print("course_name ##: ", course_name)
             print("sold_count ##: ", sold_count)
@@ -66,6 +72,7 @@ class KeSpider(scrapy.Spider):
             item["price"] = price
             item["sold_by"] = sold_by
             item["link"] = link
+            item["cid"] = course_id
 
             itemList["KeqqItem"] = item 
 
@@ -80,6 +87,11 @@ class KeSpider(scrapy.Spider):
         intro_title =  response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/th/text()").extract()
         intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract()
         teacher_intro_title = response.xpath("//div[@class='tabs-content']/h3/text()").extract()
+        # Get course id
+        req_url = response.url # "https://ke.qq.com/course/206987"
+        split_str = req_url.split("/")
+        course_id = split_str[-1] #取得url中的课程id
+        print("course_id: ", course_id)
 
         print("intro_tab: ", intro_tab)
         print("intro_title: ", intro_title)
@@ -94,6 +106,7 @@ class KeSpider(scrapy.Spider):
         itemIntro["intro_title"] = intro_title
         itemIntro["intro_detail"] = intro_detail
         itemIntro["teacher_intro_title"] = teacher_intro_title
+        itemIntro["cid"] = course_id
 
         itemList["KeqqItemIntro"] = itemIntro        
         
@@ -115,6 +128,7 @@ class KeSpider(scrapy.Spider):
             itemTeacher["teacher_id"] = teacher_id
             itemTeacher["teacher_name"] = teacher_name
             itemTeacher["teacher_intro"] = teacher_intro
+            itemTeacher["cid"] = course_id
             # itemTeacher["course_url"] = course_url
 
             itemTeachers.append(itemTeacher)
@@ -221,11 +235,7 @@ class KeSpider(scrapy.Spider):
 
         #  Get comments 
         print("Starting to fetch comments ....")
-        req_url = response.url # "https://ke.qq.com/course/206987"
-        split_str = req_url.split("/")
-        course_id = split_str[-1] #取得url中的课程id
-        print("course_id: ", course_id)
-
+       
         # course_id = '206987' #course_id
         url = "https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid="+course_id+"&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375"
         header = {
