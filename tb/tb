@@ -95,6 +95,20 @@ create table TaskInfo (
 );
 
 
+
+create table comment (
+	id int not null auto_increment primary key,
+	nick_name varchar(50),
+	userid varchar(50),
+	first_comment_score varchar(50),
+	first_comment_time varchar(50),
+	first_comment_progress varchar(50),
+	rating varchar(50),
+	first_comment varchar(50),
+	cid varchar(50)
+);
+
+
 cid varchar(50),
 termid varchar(50),
 csid varchar(50),

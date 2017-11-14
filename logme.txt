@@ -1,10 +1,10 @@
-2017-11-13 23:57:46 [scrapy.utils.log] INFO: Scrapy 1.4.0 started (bot: keqq)
-2017-11-13 23:57:46 [scrapy.utils.log] INFO: Overridden settings: {'BOT_NAME': 'keqq', 'COOKIES_ENABLED': False, 'FEED_EXPORT_ENCODING': 'utf-8', 'LOG_FILE': 'F:\\appDataPractice\\scrapy\\keqq\\logme2346.txt', 'NEWSPIDER_MODULE': 'keqq.spiders', 'SPIDER_MODULES': ['keqq.spiders']}
-2017-11-13 23:57:46 [scrapy.middleware] INFO: Enabled extensions:
+2017-11-14 22:30:52 [scrapy.utils.log] INFO: Scrapy 1.4.0 started (bot: keqq)
+2017-11-14 22:30:52 [scrapy.utils.log] INFO: Overridden settings: {'BOT_NAME': 'keqq', 'COOKIES_ENABLED': False, 'FEED_EXPORT_ENCODING': 'utf-8', 'LOG_FILE': 'F:\\appDataPractice\\scrapy\\keqq\\logme.txt', 'NEWSPIDER_MODULE': 'keqq.spiders', 'SPIDER_MODULES': ['keqq.spiders']}
+2017-11-14 22:30:52 [scrapy.middleware] INFO: Enabled extensions:
 ['scrapy.extensions.corestats.CoreStats',
  'scrapy.extensions.telnet.TelnetConsole',
  'scrapy.extensions.logstats.LogStats']
-2017-11-13 23:57:46 [scrapy.middleware] INFO: Enabled downloader middlewares:
+2017-11-14 22:30:52 [scrapy.middleware] INFO: Enabled downloader middlewares:
 ['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
  'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
  'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
@@ -15,29 +15,29 @@
  'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
  'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
  'scrapy.downloadermiddlewares.stats.DownloaderStats']
-2017-11-13 23:57:46 [scrapy.middleware] INFO: Enabled spider middlewares:
+2017-11-14 22:30:52 [scrapy.middleware] INFO: Enabled spider middlewares:
 ['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
  'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
  'scrapy.spidermiddlewares.referer.RefererMiddleware',
  'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
  'scrapy.spidermiddlewares.depth.DepthMiddleware']
-2017-11-13 23:57:46 [scrapy.middleware] INFO: Enabled item pipelines:
+2017-11-14 22:30:52 [scrapy.middleware] INFO: Enabled item pipelines:
 ['keqq.pipelines.KeqqPipeline']
-2017-11-13 23:57:46 [scrapy.core.engine] INFO: Spider opened
-2017-11-13 23:57:46 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
-2017-11-13 23:57:46 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
-2017-11-13 23:57:47 [scrapy.downloadermiddlewares.redirect] DEBUG: Redirecting (302) to <GET https://ke.qq.com/> from <GET http://ke.qq.com/>
-2017-11-13 23:57:47 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/> (referer: None)
-2017-11-13 23:57:47 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1> (referer: https://ke.qq.com/)
-2017-11-13 23:57:48 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/170392> (referer: https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1)
-2017-11-13 23:57:48 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375> (referer: https://ke.qq.com/course/170392)
-2017-11-13 23:57:48 [scrapy.core.scraper] DEBUG: Scraped from <200 https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375>
-{'KeqqItem': {'cid': '170392',
+2017-11-14 22:30:52 [scrapy.core.engine] INFO: Spider opened
+2017-11-14 22:30:52 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2017-11-14 22:30:52 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
+2017-11-14 22:30:53 [scrapy.downloadermiddlewares.redirect] DEBUG: Redirecting (302) to <GET https://ke.qq.com/> from <GET http://ke.qq.com/>
+2017-11-14 22:30:53 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/> (referer: None)
+2017-11-14 22:30:54 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1> (referer: https://ke.qq.com/)
+2017-11-14 22:30:54 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/170392> (referer: https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1)
+2017-11-14 22:30:54 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375> (referer: https://ke.qq.com/course/170392)
+2017-11-14 22:30:55 [scrapy.core.scraper] DEBUG: Scraped from <200 https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375>
+{'KeqqItem': [{'cid': '170392',
  'course_name': '顾忠的贝斯世界俱乐部',
  'link': 'https://ke.qq.com/course/170392',
  'price': '    ¥299.00   ',
  'sold_by': '哎呀音乐',
- 'sold_count': '   201人 购买  '},
+ 'sold_count': '   201人 购买  '}],
  'KeqqItemChapter': [{'chapter_aid': 12030,
  'chapter_ch_id': 281105,
  'chapter_cid': 170392,
@@ -499,17 +499,17 @@
  'term_aid': 12030,
  'term_cid': 170392,
  'term_id': 100199073}]}
-2017-11-13 23:57:48 [scrapy.core.engine] INFO: Closing spider (finished)
-2017-11-13 23:57:48 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+2017-11-14 22:30:55 [scrapy.core.engine] INFO: Closing spider (finished)
+2017-11-14 22:30:55 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
 {'downloader/request_bytes': 1625,
  'downloader/request_count': 5,
  'downloader/request_method_count/GET': 5,
- 'downloader/response_bytes': 89156,
+ 'downloader/response_bytes': 89777,
  'downloader/response_count': 5,
  'downloader/response_status_count/200': 4,
  'downloader/response_status_count/302': 1,
  'finish_reason': 'finished',
- 'finish_time': datetime.datetime(2017, 11, 13, 15, 57, 48, 889206),
+ 'finish_time': datetime.datetime(2017, 11, 14, 14, 30, 55, 180805),
  'item_scraped_count': 1,
  'log_count/DEBUG': 7,
  'log_count/INFO': 7,
@@ -519,15 +519,15 @@
  'scheduler/dequeued/memory': 5,
  'scheduler/enqueued': 5,
  'scheduler/enqueued/memory': 5,
- 'start_time': datetime.datetime(2017, 11, 13, 15, 57, 46, 984206)}
-2017-11-13 23:57:48 [scrapy.core.engine] INFO: Spider closed (finished)
-2017-11-13 23:58:44 [scrapy.utils.log] INFO: Scrapy 1.4.0 started (bot: keqq)
-2017-11-13 23:58:44 [scrapy.utils.log] INFO: Overridden settings: {'BOT_NAME': 'keqq', 'COOKIES_ENABLED': False, 'FEED_EXPORT_ENCODING': 'utf-8', 'LOG_FILE': 'F:\\appDataPractice\\scrapy\\keqq\\logme2346.txt', 'NEWSPIDER_MODULE': 'keqq.spiders', 'SPIDER_MODULES': ['keqq.spiders']}
-2017-11-13 23:58:44 [scrapy.middleware] INFO: Enabled extensions:
+ 'start_time': datetime.datetime(2017, 11, 14, 14, 30, 52, 743805)}
+2017-11-14 22:30:55 [scrapy.core.engine] INFO: Spider closed (finished)
+2017-11-14 22:34:46 [scrapy.utils.log] INFO: Scrapy 1.4.0 started (bot: keqq)
+2017-11-14 22:34:46 [scrapy.utils.log] INFO: Overridden settings: {'BOT_NAME': 'keqq', 'COOKIES_ENABLED': False, 'FEED_EXPORT_ENCODING': 'utf-8', 'LOG_FILE': 'F:\\appDataPractice\\scrapy\\keqq\\logme.txt', 'NEWSPIDER_MODULE': 'keqq.spiders', 'SPIDER_MODULES': ['keqq.spiders']}
+2017-11-14 22:34:46 [scrapy.middleware] INFO: Enabled extensions:
 ['scrapy.extensions.corestats.CoreStats',
  'scrapy.extensions.telnet.TelnetConsole',
  'scrapy.extensions.logstats.LogStats']
-2017-11-13 23:58:44 [scrapy.middleware] INFO: Enabled downloader middlewares:
+2017-11-14 22:34:47 [scrapy.middleware] INFO: Enabled downloader middlewares:
 ['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
  'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
  'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
@@ -538,28 +538,29 @@
  'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
  'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
  'scrapy.downloadermiddlewares.stats.DownloaderStats']
-2017-11-13 23:58:44 [scrapy.middleware] INFO: Enabled spider middlewares:
+2017-11-14 22:34:47 [scrapy.middleware] INFO: Enabled spider middlewares:
 ['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
  'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
  'scrapy.spidermiddlewares.referer.RefererMiddleware',
  'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
  'scrapy.spidermiddlewares.depth.DepthMiddleware']
-2017-11-13 23:58:44 [scrapy.middleware] INFO: Enabled item pipelines:
+2017-11-14 22:34:47 [scrapy.middleware] INFO: Enabled item pipelines:
 ['keqq.pipelines.KeqqPipeline']
-2017-11-13 23:58:44 [scrapy.core.engine] INFO: Spider opened
-2017-11-13 23:58:44 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
-2017-11-13 23:58:44 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
-2017-11-13 23:58:44 [scrapy.downloadermiddlewares.redirect] DEBUG: Redirecting (302) to <GET https://ke.qq.com/> from <GET http://ke.qq.com/>
-2017-11-13 23:58:45 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/> (referer: None)
-2017-11-13 23:58:45 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1> (referer: https://ke.qq.com/)
-2017-11-13 23:58:46 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/170392> (referer: https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1)
-2017-11-13 23:58:46 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375> (referer: https://ke.qq.com/course/170392)
-2017-11-13 23:58:46 [scrapy.core.scraper] ERROR: Error processing {'KeqqItem': {'cid': '170392',
+2017-11-14 22:34:47 [scrapy.core.engine] INFO: Spider opened
+2017-11-14 22:34:47 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2017-11-14 22:34:47 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:6023
+2017-11-14 22:34:47 [scrapy.downloadermiddlewares.redirect] DEBUG: Redirecting (302) to <GET https://ke.qq.com/> from <GET http://ke.qq.com/>
+2017-11-14 22:34:49 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/> (referer: None)
+2017-11-14 22:34:49 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1> (referer: https://ke.qq.com/)
+2017-11-14 22:34:50 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/course/170392> (referer: https://ke.qq.com/course/list/%E9%A1%BE%E5%BF%A0%E7%9A%84%E8%B4%9D%E6%96%AF%E4%B8%96%E7%95%8C%E4%BF%B1%E4%B9%90%E9%83%A8?page=1)
+2017-11-14 22:34:50 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375> (referer: https://ke.qq.com/course/170392)
+2017-11-14 22:34:50 [scrapy.core.scraper] DEBUG: Scraped from <200 https://ke.qq.com/cgi-bin/comment_new/course_comment_list?cid=170392&count=10&page=0&filter_rating=0&bkn=&r=0.1975509950404375>
+{'KeqqItem': [{'cid': '170392',
  'course_name': '顾忠的贝斯世界俱乐部',
  'link': 'https://ke.qq.com/course/170392',
  'price': '    ¥299.00   ',
  'sold_by': '哎呀音乐',
- 'sold_count': '   201人 购买  '},
+ 'sold_count': '   201人 购买  '}],
  'KeqqItemChapter': [{'chapter_aid': 12030,
  'chapter_ch_id': 281105,
  'chapter_cid': 170392,
@@ -1021,34 +1022,19 @@
  'term_aid': 12030,
  'term_cid': 170392,
  'term_id': 100199073}]}
-Traceback (most recent call last):
-  File "F:\appDataPractice\scrapy\keqq\keqq\pipelines.py", line 22, in process_item
-    print(item["course_name"])
-  File "d:\ProgramData\Anaconda3\lib\site-packages\scrapy\item.py", line 59, in __getitem__
-    return self._values[key]
-KeyError: 'course_name'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "d:\ProgramData\Anaconda3\lib\site-packages\twisted\internet\defer.py", line 653, in _runCallbacks
-    current.result = callback(current.result, *args, **kw)
-  File "F:\appDataPractice\scrapy\keqq\keqq\pipelines.py", line 39, in process_item
-    print("This e.message is very effective: ", e.message)
-AttributeError: 'KeyError' object has no attribute 'message'
-2017-11-13 23:58:46 [scrapy.core.engine] INFO: Closing spider (finished)
-2017-11-13 23:58:46 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+2017-11-14 22:34:50 [scrapy.core.engine] INFO: Closing spider (finished)
+2017-11-14 22:34:50 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
 {'downloader/request_bytes': 1625,
  'downloader/request_count': 5,
  'downloader/request_method_count/GET': 5,
- 'downloader/response_bytes': 89158,
+ 'downloader/response_bytes': 89773,
  'downloader/response_count': 5,
  'downloader/response_status_count/200': 4,
  'downloader/response_status_count/302': 1,
  'finish_reason': 'finished',
- 'finish_time': datetime.datetime(2017, 11, 13, 15, 58, 46, 759206),
- 'log_count/DEBUG': 6,
- 'log_count/ERROR': 1,
+ 'finish_time': datetime.datetime(2017, 11, 14, 14, 34, 50, 990805),
+ 'item_scraped_count': 1,
+ 'log_count/DEBUG': 7,
  'log_count/INFO': 7,
  'request_depth_max': 3,
  'response_received_count': 4,
@@ -1056,5 +1042,5 @@ AttributeError: 'KeyError' object has no attribute 'message'
  'scheduler/dequeued/memory': 5,
  'scheduler/enqueued': 5,
  'scheduler/enqueued/memory': 5,
- 'start_time': datetime.datetime(2017, 11, 13, 15, 58, 44, 861206)}
-2017-11-13 23:58:46 [scrapy.core.engine] INFO: Spider closed (finished)
+ 'start_time': datetime.datetime(2017, 11, 14, 14, 34, 47, 333805)}
+2017-11-14 22:34:50 [scrapy.core.engine] INFO: Spider closed (finished)

@@ -45,6 +45,7 @@ class KeSpider(scrapy.Spider):
         
         itemList = KeqqItemList()
 
+        courses = []
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
             course_name = course.xpath("./h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract_first()
             sold_count  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='line-cell item-user']/text()").extract_first()
@@ -66,17 +67,19 @@ class KeSpider(scrapy.Spider):
             print("link ##: ", link)
             #For Debug purpose #
             
-            item = KeqqItem()
-            item["course_name"] = course_name
-            item["sold_count"] = sold_count
-            item["price"] = price
-            item["sold_by"] = sold_by
-            item["link"] = link
-            item["cid"] = course_id
+            course = KeqqItem()
+            course["course_name"] = course_name
+            course["sold_count"] = sold_count
+            course["price"] = price
+            course["sold_by"] = sold_by
+            course["link"] = link
+            course["cid"] = course_id
 
-            itemList["KeqqItem"] = item 
-
+            courses.append(course)
             yield Request(url=link, callback=self.detail)
+
+        itemList["KeqqItem"] = courses
+        print("@@##$$$@@") # run?
 
 
     def detail(self, response):

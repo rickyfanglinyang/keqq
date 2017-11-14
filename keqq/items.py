@@ -83,8 +83,8 @@ class KeqqItemComment(scrapy.Item):
     first_comment_time = scrapy.Field()
     first_comment_progress = scrapy.Field()
     rating = scrapy.Field()
-    cid = scrapy.Field()
     first_comment = scrapy.Field()
+    cid = scrapy.Field()
 
 class KeqqItemList(scrapy.Item):
     # define the fields for your item here like:
