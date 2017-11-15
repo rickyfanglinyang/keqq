@@ -108,8 +108,13 @@ create table comment (
 	cid varchar(50)
 );
 
+----------------------------------------------------------------------
+ --在表goods中新增列brand
+ alter table goods add brand char(50);
+ --修改表字段长度
+ alter table goods modify title char(100), modify link char(200), modify brand char(100);
+ --
+ insert into goods(title, link, price, comment, brand) values('Conductor Music Stand AP-182-MW', 'http://www.lazada.sg/conductor-music-stand-ap-182-mw-53478349.html?ff=1', '33.9', '0
+', 'My Piano SG');
 
-cid varchar(50),
-termid varchar(50),
-csid varchar(50),
-taid varchar(50)
+ alter table goods add soldBy char(50);

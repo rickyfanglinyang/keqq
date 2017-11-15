@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import mysql.connector
+import logging
 
 # Define your item pipelines here
 #
@@ -13,16 +14,18 @@ class KeqqPipeline(object):
     def __init__(self):
         self.conn = mysql.connector.connect(host="127.0.0.1", user="root", password="mysql123", db="keqq")
         self.cursor = self.conn.cursor(buffered=True,dictionary=True)
+        print("@ __init__ of KeqqPipeline")
+        logging.info("This is an info @ __init__ of KeqqPipeline")
 
     def process_item(self, item, spider):
         try:
              # conn = mysql.connector.connect(host="127.0.0.1", user="root", password="mysql123", db="keqq")
              # cursor = conn.cursor()
 
-             # sql ="insert into course(course_name, sold_count, price, sold_by, link, cid) values('"+item["course_name"][0]+"', '"+item["sold_count"][0]+"', '"+item["price"][0]+"','"+item["sold_by"][0]+"','"+item["link"][0]+"','"+item["cid"][0]+"')";
-             sql = "select * from course"             
+             # sql ="insert into course(course_name, sold_count, price, sold_by, link, cid) values('"+item["course_name"]+"', '"+item["sold_count"]+"', '"+item["price"]+"','"+item["sold_by"]+"','"+item["link"]+"','"+item["cid"]+"')";
+                      
 
-             # sql = "insert into goods(title, link, price, comment, brand, soldBy) values('"+item["title"][0]+"', '"+item["link"]+"', '"+item["price"][0]+"', '"+item["comment"][0]+"', '"+item['brand'][0]+"', '"+item['soldBy'][0]+"')"
+             # sql = "insert into goods(title, link, price, comment, brand, soldBy) values('"+item["title"]+"', '"+item["link"]+"', '"+item["price"]+"', '"+item["comment"]+"', '"+item['brand']+"', '"+item['soldBy']+"')"
              # print(item["course_name"])
 
              # self.cursor.execute(sql)
@@ -30,64 +33,91 @@ class KeqqPipeline(object):
              # print("values @####: ", values)
              # cursor.rowcount
 
-             if 'KeqqItem' in item:
+             logging.info("This is an info @ process_item()")
+
+             # if 'KeqqItem' in item:
+             #    print("@ KeqqItem")
+             #    logging.info("This is an info @ KeqqItem")
+             #    print("in course_name")
+             #    sql ="insert into course(course_name, sold_count, price, sold_by, link, cid) \
+             #    values('"+item["KeqqItem"]["course_name"]+"', '"+item["KeqqItem"]["sold_count"]+"', '"+item["KeqqItem"]["price"]+"','"+item["KeqqItem"]["sold_by"]+"','"+item["KeqqItem"]["link"]+"','"+item["KeqqItem"]["cid"]+"')";
+             #    logging.info("sql %s @ KeqqItem" %sql)
+             #    # self.cursor.execute(sql)
+             # elif 'KeqqItemChapter' in item:
+             #    print("@ KeqqItemTeacher")
+             # elif 'KeqqItemTerm' in item:
+             #    print("@ KeqqItemTerm")
+             # elif 'KeqqItemChapter' in item:
+             #    print("@ KeqqItemChapter")
+             # elif 'KeqqItemSubInfo' in item:
+             #    print("@ KeqqItemSubInfo")
+             # elif 'KeqqItemTaskInfo' in item:
+             #    print("@ KeqqItemTaskInfo")
+             # elif 'KeqqItemComment' in item:
+             #    print("@ KeqqItemComment")
+             # elif 'KeqqItemIntro' in item:
+             #    print("@ KeqqItemIntro")
+             # else:
+             #    print("@ else ")
+
+
+             if "KeqqItem" in item:
                 print("@ KeqqItem")
-             elif 'KeqqItemTeacher' in item:
-                print("@ KeqqItemTeacher")
-             elif 'KeqqItemTerm' in item:
-                print("@ KeqqItemTerm")
-             elif 'KeqqItemChapter' in item:
-                print("@ KeqqItemChapter")
-             elif 'KeqqItemSubInfo' in item:
-                print("@ KeqqItemSubInfo")
-             elif 'KeqqItemTaskInfo' in item:
-                print("@ KeqqItemTaskInfo")
-             elif 'KeqqItemComment' in item:
-                print("@ KeqqItemComment")
-             elif 'KeqqItemIntro' in item:
-                print("@ KeqqItemIntro")
-             else:
-                print("@ else ")
-
-
-             if "course_name" in item:
+                logging.info("This is an info @ KeqqItem")
                 print("in course_name")
                 sql ="insert into course(course_name, sold_count, price, sold_by, link, cid) \
-                values('"+item["course_name"][0]+"', '"+item["sold_count"][0]+"', '"+item["price"][0]+"','"+item["sold_by"][0]+"','"+item["link"][0]+"','"+item["cid"][0]+"')";
-                # self.cursor.execute(sql)
-             elif "intro_detail" in item:
-                print("in intro_detail")
+                values('"+item["KeqqItem"][0]["course_name"]+"', '"+item["KeqqItem"][0]["sold_count"]+"', '"+item["KeqqItem"][0]["price"]+"','"+item["KeqqItem"][0]["sold_by"]+"','"+item["KeqqItem"][0]["link"]+"','"+item["KeqqItem"][0]["cid"]+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemIntro" in item:
+                print("in intro_detail @@@@:", str(item["KeqqItemIntro"]["cid"]))
+
                 sql ="insert into courseIntro(intro_tab, content_tab, comment_tab, intro_title, intro_detail, teacher_intro_title, cid) \
-                values('"+item["intro_tab"][0]+"', '"+item["content_tab"][0]+"', '"+item["comment_tab"][0]+"','"+item["intro_title"][0]+"','"+item["intro_detail"][0]+"','"+item["teacher_intro_title"][0]+"','"+item["cid"][0]+"')";
-             elif "teacher_name" in item:
+                values('"+str(item["KeqqItemIntro"]["intro_tab"])+"', '"+str(item["KeqqItemIntro"]["content_tab"])+"', '"+str(item["KeqqItemIntro"]["comment_tab"]) \
+                +"','"+str(item["KeqqItemIntro"]["intro_title"])+"','"+str(item["KeqqItemIntro"]["intro_detail"])+"','"+str(item["KeqqItemIntro"]["teacher_intro_title"]) \
+                +"','"+str(item["KeqqItemIntro"]["cid"])+"')";
+
+
+                logging.info("sql %s @ KeqqItemIntro" %sql)
+             if "KeqqItemTeacher" in item:
                 print("in teacher_name")
                 sql ="insert into teacher(teacher_id, teacher_name, teacher_intro, cid) \
-                values('"+item["teacher_id"][0]+"', '"+item["teacher_name"][0]+"', '"+item["teacher_intro"][0]+"','"+item["cid"][0]+"')";
-             elif "term_Name" in item:
+                values('"+item["KeqqItemTeacher"][0]["teacher_id"]+"', '"+item["KeqqItemTeacher"][0]["teacher_name"]+"', '"+item["KeqqItemTeacher"][0]["teacher_intro"]+"','"+item["KeqqItemTeacher"][0]["cid"]+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemTerm" in item:
                 print("in term_Name")
                 sql ="insert into term(term_Name, term_id, term_cid, term_aid) \
-                values('"+item["term_Name"][0]+"', '"+item["term_id"][0]+"', '"+item["term_cid"][0]+"','"+item["term_aid"][0]+"')";
-             elif "chapter_term_id" in item:
+                values('"+item["KeqqItemTerm"][0]["term_Name"]+"', '"+str(item["KeqqItemTerm"][0]["term_id"])+"', '"+str(item["KeqqItemTerm"][0]["term_cid"])+"','"+str(item["KeqqItemTerm"][0]["term_aid"])+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemChapter" in item:
                 print("in chapter_term_id")
                 sql ="insert into Chapter(chapter_term_id, chapter_aid, chapter_ch_id, chapter_cid) \
-                values('"+item["chapter_term_id"][0]+"', '"+item["chapter_aid"][0]+"', '"+item["chapter_ch_id"][0]+"','"+item["chapter_cid"][0]+"')";
-             elif "sub_info_term_id" in item:
+                values('"+str(item["KeqqItemChapter"][0]["chapter_term_id"])+"', '"+str(item["KeqqItemChapter"][0]["chapter_aid"])+"', '"+str(item["KeqqItemChapter"][0]["chapter_ch_id"])+"','"+str(item["KeqqItemChapter"][0]["chapter_cid"])+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemSubInfo" in item:
                 print("in sub_info_term_id")
                 sql ="insert into SubInfo(sub_info_term_id, sub_info_csid, sub_info_cid, sub_info_sub_id, sub_info_name) \
-                values('"+item["sub_info_term_id"][0]+"', '"+item["sub_info_csid"][0]+"', '"+item["sub_info_cid"][0]+"','"+item["sub_info_sub_id"][0]+"','"+item["sub_info_name"][0]+"')";
-             elif "task_info_name" in item:
+                values('"+str(item["KeqqItemSubInfo"][0]["sub_info_term_id"])+"', '"+str(item["KeqqItemSubInfo"][0]["sub_info_csid"])+"', '"+str(item["KeqqItemSubInfo"][0]["sub_info_cid"])+"','"+str(item["KeqqItemSubInfo"][0]["sub_info_sub_id"])+"','"+str(item["KeqqItemSubInfo"][0]["sub_info_name"])+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemTaskInfo" in item:
                 print("in task_info_name")
                 sql ="insert into TaskInfo(task_info_name, task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid) \
-                values('"+item["task_info_name"][0]+"', '"+item["task_info_term_id"][0]+"', '"+item["task_info_csid"][0]+"','"+item["task_info_aid"][0]+"','"+item["task_info_cid"][0]+"','"+item["task_info_taid"][0]+"')";
-             elif "first_comment" in item:
+                values('"+item["KeqqItemTaskInfo"][0]["task_info_name"]+"', '"+str(item["KeqqItemTaskInfo"][0]["task_info_term_id"])+"', '"+str(item["KeqqItemTaskInfo"][0]["task_info_csid"])+"','"+str(item["KeqqItemTaskInfo"][0]["task_info_aid"])+"','"+str(item["KeqqItemTaskInfo"][0]["task_info_cid"])+"','"+str(item["KeqqItemTaskInfo"][0]["task_info_taid"])+"')";
+                logging.info("sql %s @ KeqqItem" %sql)
+             if "KeqqItemComment" in item:
                 print("in first_comment")
                 sql ="insert into comment(nick_name, userid, first_comment_score, first_comment_time, first_comment_progress, rating, first_comment, cid) \
-                values('"+item["nick_name"][0]+"', '"+item["userid"][0]+"', '"+item["first_comment_score"][0]+"','"+item["first_comment_time"][0]+"','"+item["first_comment_progress"][0]+"','"+item["first_comment"][0]+"','"+item["cid"][0]+"')";
-             else:
-                print("in else")
-                self.cursor.execute(sql)
-                values = self.cursor.fetchall()
-                print("values @####: ", values)
+                values('"+item["KeqqItemComment"][0]["nick_name"]+"', '"+str(item["KeqqItemComment"][0]["userid"])+"', '"+str(item["KeqqItemComment"][0]["first_comment_score"])+"','"+str(item["KeqqItemComment"][0]["first_comment_time"]) \
+                +"','"+str(item["KeqqItemComment"][0]["first_comment_progress"])+"','"+item["KeqqItemComment"][0]["first_comment"]+"','"+str(item["KeqqItemComment"][0]["cid"])+"')";
+                logging.info("sql %s @ KeqqItemComment" %sql)
+             # else:
+             #    print("in else")
+             #    sql = "select * from course"    
+             #    # self.cursor.execute(sql)
+             #    # values = self.cursor.fetchall()
+             #    print("values @####: ", values)
+             # if sql:
+             #    print("Empty sql@#$")
+             #    return
 
              self.cursor.execute(sql)
              self.conn.commit()

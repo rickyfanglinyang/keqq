@@ -45,6 +45,7 @@ class KeSpider(scrapy.Spider):
         
         itemList = KeqqItemList()
 
+        global courses
         courses = []
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
             course_name = course.xpath("./h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract_first()
@@ -78,8 +79,8 @@ class KeSpider(scrapy.Spider):
             courses.append(course)
             yield Request(url=link, callback=self.detail)
 
-        itemList["KeqqItem"] = courses
-        print("@@##$$$@@") # run?
+        # itemList["KeqqItem"] = courses
+        # print("@@##$$$@@") # run?
 
 
     def detail(self, response):
@@ -121,9 +122,9 @@ class KeSpider(scrapy.Spider):
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
             # course_url = response.url
 
-            print("teacher_id: ", teacher_id)
-            print("teacher_name: ", teacher_name)
-            print("teacher_intro: ", teacher_intro)
+            # print("teacher_id: ", teacher_id)
+            # print("teacher_name: ", teacher_name)
+            # print("teacher_intro: ", teacher_intro)
             # print("course_url: ", course_url)
 
             itemTeacher = KeqqItemTeacher()
@@ -158,9 +159,9 @@ class KeSpider(scrapy.Spider):
             term_cid = jdata["terms"][i]["cid"]
             term_aid = jdata["terms"][i]["aid"]
 
-            print("termName: %s"%term_Name) 
-            print("i= %d"%i)
-            print("term_Name: %s term_id : %s term_cid: %s term_aid %s "%(term_Name, term_id, term_cid, term_aid))
+            # print("termName: %s"%term_Name) 
+            # print("i= %d"%i)
+            # print("term_Name: %s term_id : %s term_cid: %s term_aid %s "%(term_Name, term_id, term_cid, term_aid))
 
             itemTerm = KeqqItemTerm()
 
@@ -176,7 +177,7 @@ class KeSpider(scrapy.Spider):
                 chapter_aid = jdata["terms"][i]["chapter_info"][ichapter]["aid"]
                 chapter_ch_id = jdata["terms"][i]["chapter_info"][ichapter]["ch_id"]
                 chapter_cid = jdata["terms"][i]["chapter_info"][ichapter]["cid"]
-                print("chapter_term_id: %s chapter_aid : %s chapter_ch_id: %s chapter_cid %s "%(chapter_term_id, chapter_aid, chapter_ch_id, chapter_cid))
+                # print("chapter_term_id: %s chapter_aid : %s chapter_ch_id: %s chapter_cid %s "%(chapter_term_id, chapter_aid, chapter_ch_id, chapter_cid))
 
                 itemChapter = KeqqItemChapter()
 
@@ -193,10 +194,10 @@ class KeSpider(scrapy.Spider):
                      sub_info_cid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["cid"]
                      sub_info_sub_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["sub_id"] + 1
                      sub_info_sub_id = "%02d" % sub_info_sub_id
-                     print("sub_info_sub_id: %s"%sub_info_sub_id)
                      sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["name"]
-                     print("sub_info_name: %s"%sub_info_name)
-                     print("sub_info_term_id: %s sub_info_csid : %s sub_info_cid: %s"%(sub_info_term_id, sub_info_csid, sub_info_cid))
+                     # print("sub_info_sub_id: %s"%sub_info_sub_id)
+                     # print("sub_info_name: %s"%sub_info_name)
+                     # print("sub_info_term_id: %s sub_info_csid : %s sub_info_cid: %s"%(sub_info_term_id, sub_info_csid, sub_info_cid))
                     
                      itemSubInfo = KeqqItemSubInfo()
 
@@ -217,8 +218,8 @@ class KeSpider(scrapy.Spider):
                         task_info_cid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["cid"]
                         task_info_taid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["taid"]
 
-                        print("task_info_name: %s"%task_info_name)
-                        print("task_info_term_id: %s task_info_csid : %s task_info_aid: %s task_info_cid %s task_info_taid: %s"%(task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid))
+                        # print("task_info_name: %s"%task_info_name)
+                        # print("task_info_term_id: %s task_info_csid : %s task_info_aid: %s task_info_cid %s task_info_taid: %s"%(task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid))
     
                         itemTaskInfo = KeqqItemTaskInfo()                        
                         itemTaskInfo["task_info_name"] = task_info_name
@@ -292,6 +293,7 @@ class KeSpider(scrapy.Spider):
             itemComments.append(itemComment)           
 
         itemList["KeqqItemComment"] = itemComments
+        itemList["KeqqItem"] = courses # Add courses 
         # 返回所有的数据        
         yield itemList
            
