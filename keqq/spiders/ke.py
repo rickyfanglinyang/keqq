@@ -85,12 +85,13 @@ class KeSpider(scrapy.Spider):
 
     def detail(self, response):
         # Course Intro
-        intro_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_basic_tab']/text()").extract()
-        content_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_dir_tab']/text()").extract()
-        comment_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_comment_tab']/text()").extract()
-        intro_title =  response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/th/text()").extract()
-        intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract()
-        teacher_intro_title = response.xpath("//div[@class='tabs-content']/h3/text()").extract()
+        intro_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_basic_tab']/text()").extract_first()
+        content_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_dir_tab']/text()").extract_first()
+        comment_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_comment_tab']/text()").extract_first()
+        intro_title =  response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/th/text()").extract_first()
+        intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract_first()
+        teacher_intro_title = response.xpath("//div[@class='tabs-content']/h3/text()").extract_first() # extract normal generates list, better use extract_first instead
+        # termValid = response.xpath("//div[@data-termid='100199073']/p[@class='class-date']/text()").extract_first() # Class available till date
         # Get course id
         req_url = response.url # "https://ke.qq.com/course/206987"
         split_str = req_url.split("/")
@@ -102,6 +103,7 @@ class KeSpider(scrapy.Spider):
         print("intro_detail: ", intro_detail)
         print("teacher_intro_title: ", teacher_intro_title)
 
+        itemintros = []
         itemIntro = KeqqItemIntro()
 
         itemIntro["intro_tab"] = intro_tab
@@ -112,12 +114,14 @@ class KeSpider(scrapy.Spider):
         itemIntro["teacher_intro_title"] = teacher_intro_title
         itemIntro["cid"] = course_id
 
-        itemList["KeqqItemIntro"] = itemIntro        
+        itemintros.append(itemIntro)
+
+        itemList["KeqqItemIntro"] = itemintros        
         
         #Tecacher List
         itemTeachers = []
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"):
-            teacher_id = teach.xpath("./div[@class='text-right']/h4/a/@href").extract_first()
+            teacher_id = teach.xpath("./div[@class='text-right']/h4/a/@href").re_first(r'/teacher/(.*)')
             teacher_name =  teach.xpath("./div[@class='text-right']/h4/a/text()").extract_first()
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
             # course_url = response.url

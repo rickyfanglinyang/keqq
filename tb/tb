@@ -108,6 +108,18 @@ create table comment (
 	cid varchar(50)
 );
 
+alter table courseIntro modify intro_detail varchar(200);
+
+use keqq;
+truncate courseintro;
+truncate term;
+truncate subinfo;
+truncate teacher;
+truncate taskinfo;
+truncate course;
+truncate keqq.comment;
+truncate chapter;
+
 ----------------------------------------------------------------------
  --在表goods中新增列brand
  alter table goods add brand char(50);
@@ -118,3 +130,5 @@ create table comment (
 ', 'My Piano SG');
 
  alter table goods add soldBy char(50);
+
+
