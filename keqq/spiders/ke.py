@@ -14,39 +14,42 @@ from keqq.items import KeqqItemList
 # import keqq.items # doesn't work
 import json
 import os
-
+import re
 
 class KeSpider(scrapy.Spider):
     name = 'ke'
     allowed_domains = ['ke.qq.com']
     start_urls = ['http://ke.qq.com/']
     downlaod_deplay = 10
+   
 
-    print("starting to launch request..... in %s"%start_urls)
+    # print("starting to launch request..... in %s"%start_urls)
+    logging.basicConfig(filename="F:/appDataPractice/scrapy/keqq/logmeDebug.txt", level=logging.DEBUG)
 
     def parse(self, response):
-        print("This is the start of response --------------------------")
+        # item = KeqqItemList()
+        # print("This is the start of response --------------------------")
         # result = response.body.decode('utf-8', 'ignore')
-        pagetitle = response.xpath("//title/text()").extract()
-        print(pagetitle)
+        # pagetitle = response.xpath("//title/text()").extract()
+        # print(pagetitle)
 
-        title = "title: " + str(pagetitle)
+        # title = "title: " + str(pagetitle)
         # savefield(title, "del")
-        # savefield(title)
+        # savefield(title)       
 
-        key = "顾忠的贝斯世界俱乐部"
+
+        key = "宝医堂中医" # "音乐窝" # "腾讯课堂设计大师班"  #"顾忠的贝斯世界俱乐部" # "While老师主讲-高薪就业python自动化运维云计算企业实战课程" 
         for i in range(1,2):
             url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
+            logging.debug(" [壹]This is a debug message @#: " + url)
 
-        yield Request(url=url, callback=self.page)
+            yield Request(url=url, callback=self.page)
+
+        # logging.debug("This is a debug message @ end of parse(self, response)")    
 
     def page(self, response):
-        global itemList # define global variable 
-        
-        itemList = KeqqItemList()
-
-        global courses
-        courses = []
+       
+        logging.debug(" [贰]This is a debug message @ page(self, response)")    
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
             course_name = course.xpath("./h4[@class='item-tt']/a[@class='item-tt-link']/text()").extract_first()
             sold_count  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='line-cell item-user']/text()").extract_first()
@@ -54,36 +57,70 @@ class KeSpider(scrapy.Spider):
             sold_by  = course.xpath("./div[@class='item-line item-line--middle']/span[@class='item-source']/a[@class='item-source-link']/text()").extract_first()
             link = "https:" + str(course.xpath("./a/@href").extract_first()).strip() # Remove space in front and end of the link
 
-            # Get course id
+            # # Get course id
             req_url = link # "https://ke.qq.com/course/206987"
             split_str = req_url.split("/")
             course_id = split_str[-1] #取得url中的课程id
-            print("course id in page %s" %course_id)
+                    
+            itemCourse = KeqqItem()
+            itemCourse["course_name"] = course_name
+            itemCourse["sold_count"] = sold_count
+            itemCourse["price"] = price
+            itemCourse["sold_by"] = sold_by
+            itemCourse["link"] = link
+            itemCourse["cid"] = course_id
 
-            #For Debug purpose #
-            print("course_name ##: ", course_name)
-            print("sold_count ##: ", sold_count)
-            print("price ##: ", price)
-            print("sold_by ##: ", sold_by)
-            print("link ##: ", link)
-            #For Debug purpose #
+            # courses.append(itemCourse)
+
+            # itemList.append(itemCourse)
+
+            logging.debug("[叁] This is a debug message @ page(self, response) course_name : %s" %course_name)
+            logging.debug("[叁] This is a debug message @ page(self, response) course_id : %s" %course_id)
+            logging.debug("[叁] This is a debug message @ page(self, response) link : %s" %link)
+            # item['KeqqItem'] = itemCourse # Add courses
+            # yield itemCourse
+            logging.debug("going to detail page using yield Request $ ")  
+            yield Request(url=link, callback=self.detail, meta={'itemCourse': itemCourse})
+
+        # for detailLink in itemList["KeqqItem"]["link"]:
+        #     yield Request(url=detailLink, callback=self.detail)
+
+        logging.debug(" will be the last debug logging @ end of page(self, response)")        
             
-            course = KeqqItem()
-            course["course_name"] = course_name
-            course["sold_count"] = sold_count
-            course["price"] = price
-            course["sold_by"] = sold_by
-            course["link"] = link
-            course["cid"] = course_id
-
-            courses.append(course)
-            yield Request(url=link, callback=self.detail)
-
-        # itemList["KeqqItem"] = courses
-        # print("@@##$$$@@") # run?
-
-
     def detail(self, response):
+        logging.debug(" I am in @  detail(self, response)")   
+        # global itemList # define global variable 
+        # itemList = KeqqItemList() # need to move top  
+        itemList = KeqqItemList()
+        item = response.meta['itemCourse']
+        itemList["KeqqItem"] = item
+
+        # Get course basci info<prieviously these info get from list page>
+        # Due to the result mixed mess with the other info, move it here
+        # course_name = response.xpath("//h1[@class='page-tt']/span[@class='title-main']/text()").extract_first()
+        # sold_count  = response.xpath("//div[@class='tt-below-line']/span[@class='line-item statistics-apply']/text()").extract_first()
+        # price  = response.xpath("//p[@class='course-price-info ']/span[@class='price ']/span[@class='fontsize-22']/text()").extract_first()
+        # sold_by  =  response.xpath("//div[@class='tt-cover-name']/a[@class='tt-link js-agency-name']/text()").extract_first()
+        # link = response.url
+
+        # Get course id
+        req_url = response.url # "https://ke.qq.com/course/206987"
+        logging.debug("This is a debug message @ detail(self, response) link : %s" %req_url)
+        split_str = req_url.split("/")
+        course_id = split_str[-1] #取得url中的课程id
+        print("course_id: ", course_id)
+
+        # itemCourse = KeqqItem()
+
+        # itemCourse["course_name"] = course_name
+        # itemCourse["sold_count"] = sold_count
+        # itemCourse["price"] = price
+        # itemCourse["sold_by"] = sold_by
+        # itemCourse["link"] = link
+        # itemCourse["cid"] = course_id
+
+        # itemList["KeqqItem"] = itemCourse
+
         # Course Intro
         intro_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_basic_tab']/text()").extract_first()
         content_tab = response.xpath("//div[@class='tabs-tt-bar js_tab js-tab-nav']/h2[@ref='js_dir_tab']/text()").extract_first()
@@ -92,11 +129,7 @@ class KeSpider(scrapy.Spider):
         intro_detail = response.xpath("//div[@class='guide-bd']/table[@class='tb-course']/tbody/tr/td/text()").extract_first()
         teacher_intro_title = response.xpath("//div[@class='tabs-content']/h3/text()").extract_first() # extract normal generates list, better use extract_first instead
         # termValid = response.xpath("//div[@data-termid='100199073']/p[@class='class-date']/text()").extract_first() # Class available till date
-        # Get course id
-        req_url = response.url # "https://ke.qq.com/course/206987"
-        split_str = req_url.split("/")
-        course_id = split_str[-1] #取得url中的课程id
-        print("course_id: ", course_id)
+        
 
         print("intro_tab: ", intro_tab)
         print("intro_title: ", intro_title)
@@ -114,10 +147,19 @@ class KeSpider(scrapy.Spider):
         itemIntro["teacher_intro_title"] = teacher_intro_title
         itemIntro["cid"] = course_id
 
+        logging.debug("[肆]This is a debug message @ detail(self, response) intro_detail : %s" %intro_detail)
+
         itemintros.append(itemIntro)
 
         itemList["KeqqItemIntro"] = itemintros        
         
+        # Add itemCourse in the itemList
+        # for i in range(len(itemList["KeqqItem"])):
+        #     icid = str(courses[i]["cid"])
+        #     if str(courses[i]["cid"]) == course_id:
+        #         itemList["KeqqItem"] = courses[i]
+        #         break      
+
         #Tecacher List
         itemTeachers = []
         for teach in response.xpath("//div[@class='teacher-list']/div[@class='teacher-item']"):
@@ -126,11 +168,6 @@ class KeSpider(scrapy.Spider):
             teacher_intro = teach.xpath("./div[@class='text-right']/div[@class='text-intro js-teacher-intro']/text()").extract_first()
             # course_url = response.url
 
-            # print("teacher_id: ", teacher_id)
-            # print("teacher_name: ", teacher_name)
-            # print("teacher_intro: ", teacher_intro)
-            # print("course_url: ", course_url)
-
             itemTeacher = KeqqItemTeacher()
 
             itemTeacher["teacher_id"] = teacher_id
@@ -138,6 +175,7 @@ class KeSpider(scrapy.Spider):
             itemTeacher["teacher_intro"] = teacher_intro
             itemTeacher["cid"] = course_id
             # itemTeacher["course_url"] = course_url
+            logging.debug("[伍]This is a debug message @ detail(self, response) teacher_name : %s" %teacher_name)
 
             itemTeachers.append(itemTeacher)
         
@@ -147,7 +185,12 @@ class KeSpider(scrapy.Spider):
         courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
         strCourse = str(courseTableContent[0])
         strCourse = "{"+strCourse+"}"
-        jdata = json.loads(strCourse)
+        #
+        regex = re.compile(r'\\(?![/u"])')  
+        fixed = regex.sub(r"\\\\", strCourse)  
+        #
+        # jdata = json.loads(strCourse)
+        jdata = json.loads(fixed)
 
         course_name = jdata["name"]
         print("course_name: %s"%course_name)
@@ -163,16 +206,13 @@ class KeSpider(scrapy.Spider):
             term_cid = jdata["terms"][i]["cid"]
             term_aid = jdata["terms"][i]["aid"]
 
-            # print("termName: %s"%term_Name) 
-            # print("i= %d"%i)
-            # print("term_Name: %s term_id : %s term_cid: %s term_aid %s "%(term_Name, term_id, term_cid, term_aid))
-
             itemTerm = KeqqItemTerm()
 
             itemTerm["term_Name"] = term_Name
             itemTerm["term_id"] = term_id
             itemTerm["term_cid"] = term_cid
             itemTerm["term_aid"] = term_aid
+            logging.debug(" [陆]This is a debug message @ detail(self, response) term_Name : %s" %term_Name)
 
             itemTerms.append(itemTerm)
 
@@ -190,6 +230,8 @@ class KeSpider(scrapy.Spider):
                 itemChapter["chapter_ch_id"] = chapter_ch_id
                 itemChapter["chapter_cid"] = chapter_cid
 
+                logging.debug(" [柒]This is a debug message @ detail(self, response) chapter_term_id : %s" %chapter_term_id)
+
                 itemChapters.append(itemChapter)
 
                 for isub in range(len(jdata["terms"][i]["chapter_info"][ichapter]["sub_info"])):
@@ -199,9 +241,6 @@ class KeSpider(scrapy.Spider):
                      sub_info_sub_id = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["sub_id"] + 1
                      sub_info_sub_id = "%02d" % sub_info_sub_id
                      sub_info_name = str(sub_info_sub_id) + " " + jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["name"]
-                     # print("sub_info_sub_id: %s"%sub_info_sub_id)
-                     # print("sub_info_name: %s"%sub_info_name)
-                     # print("sub_info_term_id: %s sub_info_csid : %s sub_info_cid: %s"%(sub_info_term_id, sub_info_csid, sub_info_cid))
                     
                      itemSubInfo = KeqqItemSubInfo()
 
@@ -210,6 +249,8 @@ class KeSpider(scrapy.Spider):
                      itemSubInfo["sub_info_cid"] = sub_info_cid
                      itemSubInfo["sub_info_sub_id"] = sub_info_sub_id
                      itemSubInfo["sub_info_name"] = sub_info_name
+
+                     logging.debug("[捌]This is a debug message @ detail(self, response) sub_info_name : %s" %sub_info_name)
 
                      itemSubInfos.append(itemSubInfo)
 
@@ -222,9 +263,6 @@ class KeSpider(scrapy.Spider):
                         task_info_cid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["cid"]
                         task_info_taid = jdata["terms"][i]["chapter_info"][ichapter]["sub_info"][isub]["task_info"][itask]["taid"]
 
-                        # print("task_info_name: %s"%task_info_name)
-                        # print("task_info_term_id: %s task_info_csid : %s task_info_aid: %s task_info_cid %s task_info_taid: %s"%(task_info_term_id, task_info_csid, task_info_aid, task_info_cid, task_info_taid))
-    
                         itemTaskInfo = KeqqItemTaskInfo()                        
                         itemTaskInfo["task_info_name"] = task_info_name
                         itemTaskInfo["task_info_term_id"] = task_info_term_id
@@ -232,6 +270,8 @@ class KeSpider(scrapy.Spider):
                         itemTaskInfo["task_info_aid"] = task_info_aid
                         itemTaskInfo["task_info_cid"] = task_info_cid
                         itemTaskInfo["task_info_taid"] = task_info_taid
+
+                        logging.debug("[玖]This is a debug message @ detail(self, response) task_info_name : %s" %task_info_name)
 
                         itemTaskInfos.append(itemTaskInfo)
 
@@ -241,6 +281,7 @@ class KeSpider(scrapy.Spider):
         itemList["KeqqItemSubInfo"] = itemSubInfos
         itemList["KeqqItemTaskInfo"] = itemTaskInfos
 
+          
         #  Get comments 
         print("Starting to fetch comments ....")
        
@@ -254,50 +295,65 @@ class KeSpider(scrapy.Spider):
             'x-requested-with':'XMLHttpRequest'
             }
 
-        yield Request(url=url, callback=self.getComment, headers=header)
+        yield Request(url=url, callback=self.getComment, headers=header, meta={'itemList':itemList})
+        # return itemList
        
     def getComment(self, response):
         # global item # reassure global variable 
-
+        itemList = response.meta['itemList']
         print("Inside getComment ....")
         result = response.body.decode('utf-8','ignore')
         comment = json.loads(result)
-       
-        itemComments = []
-        for i in range(len(comment["result"]["items"])):
-            nick_name  =  comment["result"]["items"][i]["nick_name"]
-            userid = comment["result"]["items"][i]["id"] 
-            first_comment_score = comment["result"]["items"][i]["first_comment_score"] # 评论星数
-            first_comment_time = comment["result"]["items"][i]["first_comment_time"] # 评论时间
-            first_comment_progress = comment["result"]["items"][i]["first_comment_progress"] # 评论时间
-            rating = comment["result"]["items"][i]["rating"] # 评分
-            cid = comment["result"]["items"][i]["cid"] # 课程id
-            first_comment =  comment["result"]["items"][i]["first_comment"] # 评论内容
+        
+        # If there are comment sections
+        if len(comment["result"]["items"]) > 0 :
+            itemComments = []
+            for i in range(len(comment["result"]["items"])):
+                nick_name  =  comment["result"]["items"][i]["nick_name"]
+                userid = comment["result"]["items"][i]["id"] 
+                first_comment_score = comment["result"]["items"][i]["first_comment_score"] # 评论星数
+                first_comment_time = comment["result"]["items"][i]["first_comment_time"] # 评论时间
+                first_comment_progress = comment["result"]["items"][i]["first_comment_progress"] # 评论时间
+                rating = comment["result"]["items"][i]["rating"] # 评分
+                cid = comment["result"]["items"][i]["cid"] # 课程id
+                first_comment =  comment["result"]["items"][i]["first_comment"] # 评论内容
 
-            try:
-                if len(comment["result"]["items"][i]) < 10 :
-                    first_reply ="No comment"
-                else:
-                    print("I am in else ")
-                    first_reply = comment["result"]["items"][i]["first_reply"] # 评论回复
-            except Exception as ex:
-                print("Errors #### @:",str(ex))
+                try:
+                    # if len(comment["result"]["items"][i]) < 10 :
+                    #     first_reply ="No comment"
+                    # else:
+                    #     print("I am in else ")
+                    #     first_reply = comment["result"]["items"][i]["first_reply"] # 评论回复
 
-            itemComment = KeqqItemComment()
+                    if "first_reply" in comment["result"]["items"][i]:
+                        print("I am in else ")
+                        first_reply = comment["result"]["items"][i]["first_reply"] # 评论回复
+                    else:
+                        first_reply ="No comment"   
 
-            itemComment["nick_name"] = nick_name
-            itemComment["userid"] = userid
-            itemComment["first_comment_score"] = first_comment_score
-            itemComment["first_comment_time"] = first_comment_time
-            itemComment["first_comment_progress"] = first_comment_progress
-            itemComment["rating"] = rating  
-            itemComment["cid"] = cid
-            itemComment["first_comment"] = first_comment   
+                except Exception as ex:
+                    print("Errors #### @:",str(ex.message))
 
-            itemComments.append(itemComment)           
+                itemComment = KeqqItemComment()
 
-        itemList["KeqqItemComment"] = itemComments
-        itemList["KeqqItem"] = courses # Add courses 
+                itemComment["nick_name"] = nick_name
+                itemComment["userid"] = userid
+                itemComment["first_comment_score"] = first_comment_score
+                itemComment["first_comment_time"] = first_comment_time
+                itemComment["first_comment_progress"] = first_comment_progress
+                itemComment["rating"] = rating  
+                itemComment["cid"] = cid
+                itemComment["first_comment"] = first_comment
+                itemComment["first_reply"] = first_reply
+
+                logging.debug("[拾]This is a debug message @ getComment(self, response) nick_name : %s and comment: %s" %(nick_name, first_comment))
+
+                itemComments.append(itemComment)    
+            print("Adding comment sections...")
+            # Put comment sections data in the item
+            itemList["KeqqItemComment"] = itemComments
+        
+        # listCourse.append(itemList)
         # 返回所有的数据        
         yield itemList
            
@@ -330,3 +386,4 @@ def savefield(fieldValue):
 # https://zhidao.baidu.com/question/1499356415053936779.html 如何利用python读取网页中变量的内容
 # http://blog.chinaunix.net/uid-23500957-id-3788157.html
 # http://m.blog.csdn.net/sqc157400661
+# https://stackoverflow.com/questions/27726506/scrapy-visiting-nested-links-and-grabbing-meta-data-from-each-level 

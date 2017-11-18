@@ -84,6 +84,7 @@ class KeqqItemComment(scrapy.Item):
     first_comment_progress = scrapy.Field()
     rating = scrapy.Field()
     first_comment = scrapy.Field()
+    first_reply = scrapy.Field()
     cid = scrapy.Field()
 
 class KeqqItemList(scrapy.Item):
