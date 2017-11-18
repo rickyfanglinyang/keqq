@@ -91,6 +91,3 @@ class KeqqPipeline(object):
             logging.exception("message")
             # print("You are receiving an error @ # : %s" %e)
             # print("This e.message is very effective: ", e.message)
-
-# https://github.com/scrapy/scrapy/issues/1i2
-# https://stackoverflow.com/questions/18364333/scrapy-suggestion-for-multiple-returns-items-to-database

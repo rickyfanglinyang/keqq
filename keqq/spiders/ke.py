@@ -287,16 +287,3 @@ def savefield(fieldValue, filepath=""):
         f.write(fieldValue)
         f.write("\n")
         f.write("-" * 100 + "\n")
-   
-
-# https://www.zhihu.com/question/28981353
-# https://zhuanlan.zhihu.com/p/20920903?refer=data-factory
-# https://ithelp.ithome.com.tw/articles/10094915
-# https://doc.phpspider.org/callback.html
-# http://blog.csdn.net/u011781521/article/details/70210364
-# https://www.weibo.com/ttarticle/p/show?id=2309404103266454643821&infeed=1
-# http://www.jianshu.com/p/4fe8bb1ea984 获取并加载数据
-# https://zhidao.baidu.com/question/1499356415053936779.html 如何利用python读取网页中变量的内容
-# http://blog.chinaunix.net/uid-23500957-id-3788157.html
-# http://m.blog.csdn.net/sqc157400661
-# https://stackoverflow.com/questions/27726506/scrapy-visiting-nested-links-and-grabbing-meta-data-from-each-level 
