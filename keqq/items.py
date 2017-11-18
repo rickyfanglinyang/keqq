@@ -38,7 +38,6 @@ class KeqqItemTeacher(scrapy.Item):
     cid = scrapy.Field() #course id
     # course_url = scrapy.Field()
     
-
 class KeqqItemTerm(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field() 
