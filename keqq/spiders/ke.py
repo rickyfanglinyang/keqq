@@ -31,14 +31,40 @@ class KeSpider(scrapy.Spider):
     logging.basicConfig(filename="F:/appDataPractice/scrapy/keqq/logmeDebug.txt", level=logging.DEBUG)
 
     def parse(self, response):
-        key = "python" 
-        for i in range(1,2):
-            url = "https://ke.qq.com/course/list/"+str(key)+"?page="+str(i)
-            logging.debug(" [壹]This is a debug message @#: " + url)
+        key = "python"#"阿里前端p6架构师培养计划【动脑学院】" #"架构师" 
 
+        # for i in range(1,2):
+        url = "https://ke.qq.com/course/list/"+str(key)
+        logging.debug(" [壹]This is a debug message @#: " + url)
+
+            # yield Request(url=url, callback=self.page)
+        yield Request(url=url, callback=self.pageCount)
+
+        # logging.debug("This is a debug message @ end of parse(self, response)")   
+
+    def pageCount(self, response):
+        pages = response.css("div.sort-page > a::attr(href)").extract()
+        url =""
+        if pages:
+            page_string = pages[-2] 
+            page = page_string.split('=')
+            page_count = page[-1] # total number of pages one query
+            # current_page_count = response.xpath("//div[@class='sort-page']/a[@class='page-btn page-btn-cur']/text()").extract_first()
+            page_count = page_count + "1"
+            url = response.url
+            url = url + "?page="
+        else:
+            page_count = 2  
+            url = response.url  
+
+        print("@ URL after split %s" %url)
+        # page_count = page_count + "1"
+
+        for i in range(1, int(page_count)):
+            url = url + str(i)
+            logging.debug(" [循环所有页面方法]This is a debug message @#: " + url)
             yield Request(url=url, callback=self.page)
-
-        # logging.debug("This is a debug message @ end of parse(self, response)")    
+        
 
     def page(self, response): 
         for course in response.xpath("//div[@class='main-left']/div[@class='market-bd market-bd-6 course-list course-card-list-multi-wrap']/ul[@class='course-card-list']/li[@class='course-card-item']"):
@@ -125,9 +151,12 @@ class KeSpider(scrapy.Spider):
         courseTableContent =  response.xpath("//body").re(r'metaData\s=\s{*(.*)};') # response.xpath("//body").re(r'metaData\s=\s*(.*)};')
         strCourse = str(courseTableContent[0])
         strCourse = "{"+strCourse+"}"
+
         # 去掉json数据中的八进制转义符
         regex = re.compile(r'\\(?![/u"])')  
         fixed = regex.sub(r"\\\\", strCourse)  
+        logging.debug("fixed json data:", str(fixed))
+       
         #
         # jdata = json.loads(strCourse)
         jdata = json.loads(fixed)
@@ -287,3 +316,6 @@ def savefield(fieldValue, filepath=""):
         f.write(fieldValue)
         f.write("\n")
         f.write("-" * 100 + "\n")
+
+# def parseJsonQuotes(data):
+#     jdata = data[]
